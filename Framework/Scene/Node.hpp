@@ -5,15 +5,15 @@
 #include <string>
 namespace FlyEngine::SCENE
 {
-    class Node
-    {
-    public:
-        Node(std::string name) : name{std::move(name)} {}
+class Node
+{
+public:
+    Node(std::string name) : name{std::move(name)} {}
 
-        const std::string &Name() const noexcept { return name; }
+    const std::string &Name() const noexcept { return name; }
 
-    protected:
-        std::string name;
-        NodeType type = NodeType::UNDEFINE;
-    };
-}
+protected:
+    std::string name;
+    NodeType    type = NodeType::UNDEFINE;
+};
+} // namespace FlyEngine::SCENE

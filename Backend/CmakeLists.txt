@@ -1,0 +1,17 @@
+
+include(Core/CMakeLists.txt)
+
+if(VULKAN)
+    include(Vulkan/CMakeLists.txt)
+endif(VULKAN)
+
+
+set(BACKEND_HEADER 
+    BackendEnum.hpp
+    DeviceFactory.hpp
+)
+
+set(BACKEND_SRC
+)
+
+add_library(BackendLib ${BACKEND_HEADER} ${BACKEND_SRC} ${BACKEND_ALL_FILES})

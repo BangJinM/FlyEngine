@@ -1,0 +1,31 @@
+BasedOnStyle: LLVM
+
+IndentWidth: 4
+
+BreakBeforeBraces: Linux 
+
+AllowShortIfStatementsOnASingleLine: true
+
+AllowShortLoopsOnASingleLine: true
+AlignConsecutiveDeclarations: true
+
+IndentCaseLabels: true
+
+ObjCBlockIndentWidth: 4
+
+ObjCSpaceAfterProperty: true
+
+ColumnLimit: 0
+
+AlignTrailingComments: true  
+
+AllowShortCaseLabelsOnASingleLine: true
+AllowAllConstructorInitializersOnNextLine: false
+
+AccessModifierOffset: -4
+
+ConstructorInitializerIndentWidth: 0
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+AlignConsecutiveMacros: true
+IndentPPDirectives: BeforeHash

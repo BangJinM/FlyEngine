@@ -4,6 +4,9 @@ set (CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_HOST_WIN32)
     set(WINDOWS 1)
+    set(VULKAN 1)
+    add_definitions("-D WIN32")
+    add_definitions("-D BACKEND_VULKAN")
 elseif(CMAKE_HOST_APPLE)
     set(MACOS 1)
 elseif(CMAKE_HOST_UNIX)
@@ -29,10 +32,11 @@ set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT} CACHE STRING "")
 project(FlyEngine VERSION 0.0.1)
 message(STATUS "[Project] ${PROJECT_NAME}")
 
+include_directories("${PROJECT_SOURCE_DIR}")
 
-add_subdirectory(Platform)
+add_subdirectory(Backend)
 add_subdirectory(Framework)
+add_subdirectory(FlyApp)
 
-add_executable(FlyEngine main.cpp)
 
 message(STATUS "[Project] ${Vulkan_INCLUDE_DIRS}")
