@@ -2,8 +2,9 @@
 
 namespace FlyEngine::SCENE
 {
-enum NodeType : int {
-    UNDEFINE = -1,
+enum NodeType : int
+{
+    UNDEFINE       = -1,
     TypeGameObject = 0,
 };
 }

@@ -23,21 +23,21 @@ namespace FlyEngine::Backend
 class FlyDevice
 {
 public:
-    virtual FlyBuffer *             CreateBuffer(const AppInfo &info) = 0;
-    virtual FlyCommandBuffer *      CreateCommandBuffer(const AppInfo &info) = 0;
-    virtual FlyDescriptorSet *      CreateDescriptorSet(const AppInfo &info) = 0;
-    virtual FlyDescriptorSetLayout *CreateDescriptorSetLayout(const AppInfo &info) = 0;
-    virtual FlyFence *              CreateFence(const AppInfo &info) = 0;
-    virtual FlyFramebuffer *        CreateFramebuffer(const AppInfo &info) = 0;
-    virtual FlyInputAssembler *     CreateInputAssembler(const AppInfo &info) = 0;
-    virtual FlyPipelineLayout *     CreatePipelineLayout(const AppInfo &info) = 0;
-    virtual FlyQueue *              CreateQueue(const AppInfo &info) = 0;
-    virtual FlyRenderPass *         CreateRenderPass(const AppInfo &info) = 0;
-    virtual FlySampler *            CreateSampler(const AppInfo &info) = 0;
-    virtual FlyShader *             CreateShader(const AppInfo &info) = 0;
-    virtual FlyTexture *            CreateTexture(const AppInfo &info) = 0;
+    virtual FlyBuffer *             CreateBuffer(const BufferInfo &info)                           = 0;
+    virtual FlyCommandBuffer *      CreateCommandBuffer(const CommandBufferInfo &info)             = 0;
+    virtual FlyDescriptorSet *      CreateDescriptorSet(const DescriptorSetInfo &info)             = 0;
+    virtual FlyDescriptorSetLayout *CreateDescriptorSetLayout(const DescriptorSetLayoutInfo &info) = 0;
+    virtual FlyFence *              CreateFence(const FenceInfo &info)                             = 0;
+    virtual FlyFramebuffer *        CreateFramebuffer(const FramebufferInfo &info)                 = 0;
+    virtual FlyInputAssembler *     CreateInputAssembler(const InputAssemblerInfo &info)           = 0;
+    virtual FlyPipelineLayout *     CreatePipelineLayout(const PipelineLayoutInfo &info)           = 0;
+    virtual FlyQueue *              CreateQueue(const QueueInfo &info)                             = 0;
+    virtual FlyRenderPass *         CreateRenderPass(const RenderPassInfo &info)                   = 0;
+    virtual FlySampler *            CreateSampler(const SamplerInfo &info)                         = 0;
+    virtual FlyShader *             CreateShader(const ShaderInfo &info)                           = 0;
+    virtual FlyTexture *            CreateTexture(const TextureInfo &info)                         = 0;
 
     virtual void Initialize(const AppInfo &info) = 0;
-    virtual void Destroy() = 0;
+    virtual void Destroy()                       = 0;
 };
-} // namespace FlyEngine::Backend
+}  // namespace FlyEngine::Backend

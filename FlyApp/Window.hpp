@@ -23,4 +23,4 @@ public:
     void Tick();
     void Destroy();
 };
-} // namespace FlyEngine
+}  // namespace FlyEngine

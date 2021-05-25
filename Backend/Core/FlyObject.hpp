@@ -4,6 +4,7 @@
 
 namespace FlyEngine::Backend
 {
+class FlyDevice;
 class FlyObject
 {
 protected:
@@ -12,7 +13,12 @@ protected:
 public:
     ObjectType GetType() { return objectType; }
 
-    FlyObject(ObjectType type) : objectType(type) {}
+    FlyObject(ObjectType type, FlyDevice *flyDevice) : objectType(type), pFlyDevice(flyDevice) {}
+
+    virtual void Destroy() = 0;
+
+protected:
+    FlyDevice *pFlyDevice;
 };
 
-} // namespace FlyEngine::Backend
+}  // namespace FlyEngine::Backend

@@ -7,10 +7,13 @@
 int main()
 {
     FlyEngine::App app;
-    try {
+    try
+    {
         app.Init();
         app.Run();
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e)
+    {
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;
     }

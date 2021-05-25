@@ -9,7 +9,8 @@ std::tuple<bool, std::vector<size_t>> DAGCompiler::TopologicalSort(std::unordere
     // key位置ID,value 数量
     for (const auto &[parent, children] : toMap)
         needCountList.emplace(parent, 0);
-    for (const auto &[parent, children] : toMap) {
+    for (const auto &[parent, children] : toMap)
+    {
         for (const auto &child : children)
             needCountList[child] += 1;
     }
@@ -17,18 +18,22 @@ std::tuple<bool, std::vector<size_t>> DAGCompiler::TopologicalSort(std::unordere
     std::stack<size_t>  zeroStack;
     std::vector<size_t> sortedList;
     // 将被引用次数为0的压栈
-    for (const auto &[v, count] : needCountList) {
+    for (const auto &[v, count] : needCountList)
+    {
         if (count == 0)
             zeroStack.push(v);
     }
     // 排序
-    while (!zeroStack.empty()) {
+    while (!zeroStack.empty())
+    {
         auto v = zeroStack.top();
         zeroStack.pop();
         sortedList.push_back(v);
         needCountList.erase(v);
-        if (toMap.find(v) != toMap.end()) {
-            for (auto child : toMap.find(v)->second) {
+        if (toMap.find(v) != toMap.end())
+        {
+            for (auto child : toMap.find(v)->second)
+            {
                 auto target = needCountList.find(child);
                 if (target == needCountList.end())
                     continue;
@@ -49,7 +54,7 @@ std::tuple<bool, std::vector<size_t>> DAGCompiler::SortPass(DirectedAcyclicGraph
 {
     std::unordered_map<size_t, std::set<size_t>> toMap;
 
-    const auto &passes = dag.passNodes;
+    const auto &passes   = dag.passNodes;
     const auto &resoures = dag.resourceNodes;
 
     std::vector<size_t>                pr;
@@ -58,14 +63,16 @@ std::tuple<bool, std::vector<size_t>> DAGCompiler::SortPass(DirectedAcyclicGraph
 
     // 将resource塞入list
     // 映射原始位置->新list位置
-    for (size_t index = 0; index < resoures.size(); index++) {
+    for (size_t index = 0; index < resoures.size(); index++)
+    {
         size_t cur = pr.size();
         pr.push_back(index);
         prIndex2R[index] = cur;
     }
     // 将pass塞入list
     // 映射原始位置->新list位置
-    for (size_t index = 0; index < passes.size(); index++) {
+    for (size_t index = 0; index < passes.size(); index++)
+    {
         size_t cur = pr.size();
         pr.push_back(index);
         prIndex2P[index] = cur;
@@ -73,18 +80,21 @@ std::tuple<bool, std::vector<size_t>> DAGCompiler::SortPass(DirectedAcyclicGraph
 
     // 构建toMap
     // key为当前位置ID,values为引用当前位置的ID
-    for (size_t i = 0; i < passes.size(); i++) {
-        const auto &pass = passes[i];
+    for (size_t i = 0; i < passes.size(); i++)
+    {
+        const auto &pass      = passes[i];
         size_t      passIndex = prIndex2P[i];
 
         const auto &inputs = pass.Inputs();
-        for (const auto &input : inputs) {
+        for (const auto &input : inputs)
+        {
             size_t inputIndex = prIndex2R[input];
-            auto & adj = toMap[inputIndex];
+            auto & adj        = toMap[inputIndex];
             adj.insert(passIndex);
         }
         auto &adj = toMap[passIndex];
-        for (const auto &output : pass.Outputs()) {
+        for (const auto &output : pass.Outputs())
+        {
             size_t outputIndex = prIndex2R[output];
             adj.insert(outputIndex);
         }
@@ -97,4 +107,4 @@ void DAGCompiler::Compiler(DirectedAcyclicGraph &dag)
 {
     auto [success, sortedPasses] = SortPass(dag);
 }
-} // namespace FlyEngine::DAG
+}  // namespace FlyEngine::DAG

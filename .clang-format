@@ -1,31 +1,63 @@
-BasedOnStyle: LLVM
+# Defines the ANGLE style for automatic reformatting.
+# https://code.google.com/p/angleproject/wiki/CodingStandard
+# See Clang docs: http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+BasedOnStyle: Chromium
 
+# Allow double brackets such as std::vector<std::vector<int>>.
+Standard: Cpp11
+
+# Indent 4 spaces at a time.
 IndentWidth: 4
 
-BreakBeforeBraces: Linux 
+# Keep lines under 150 columns long.
+ColumnLimit: 150
 
-AllowShortIfStatementsOnASingleLine: true
+# Always break before braces
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
 
-AllowShortLoopsOnASingleLine: true
-AlignConsecutiveDeclarations: true
+  # Keeps extern "C" blocks unindented.
+  AfterExternBlock: false
 
+# Indent case labels.
 IndentCaseLabels: true
 
-ObjCBlockIndentWidth: 4
+# Right-align pointers and references
+PointerAlignment: Right
 
-ObjCSpaceAfterProperty: true
+# ANGLE likes to align things as much as possible.
+AlignOperands: true
+AlignTrailingComments: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
 
-ColumnLimit: 0
 
-AlignTrailingComments: true  
-
-AllowShortCaseLabelsOnASingleLine: true
-AllowAllConstructorInitializersOnNextLine: false
-
+# Use 4 space negative offset for access modifiers
 AccessModifierOffset: -4
 
-ConstructorInitializerIndentWidth: 0
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# TODO(jmadill): Decide if we want this on. Doesn't have an "all or none" mode.
+AllowShortCaseLabelsOnASingleLine: true
 
-AlignConsecutiveMacros: true
-IndentPPDirectives: BeforeHash
+# Useful for spacing out functions in classes
+KeepEmptyLinesAtTheStartOfBlocks: true
+
+# Indent nested PP directives.
+IndentPPDirectives: AfterHash
+
+# Include blocks style
+IncludeBlocks: Preserve
+

@@ -9,9 +9,7 @@ class PassNode : public Node
 {
 public:
     PassNode(std::string name, std::vector<int> inputs, std::vector<int> outputs)
-    : Node(std::move(name)),
-      inputs{std::move(inputs)},
-      outputs{std::move(outputs)}
+        : Node(std::move(name)), inputs{std::move(inputs)}, outputs{std::move(outputs)}
     {
         type = NodeType::PASS;
     }
@@ -23,4 +21,4 @@ protected:
     std::vector<int> inputs;
     std::vector<int> outputs;
 };
-} // namespace FlyEngine::DAG
+}  // namespace FlyEngine::DAG

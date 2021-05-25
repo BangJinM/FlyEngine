@@ -35,11 +35,12 @@ void Window::Tick()
 
 void Window::Destroy()
 {
-    if (p_window) {
+    if (p_window)
+    {
         glfwDestroyWindow(p_window);
 
         glfwTerminate();
     }
 }
 
-} // namespace FlyEngine
+}  // namespace FlyEngine

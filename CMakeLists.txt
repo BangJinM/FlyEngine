@@ -33,6 +33,7 @@ project(FlyEngine VERSION 0.0.1)
 message(STATUS "[Project] ${PROJECT_NAME}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/")
 
 add_subdirectory(Backend)
 add_subdirectory(Framework)

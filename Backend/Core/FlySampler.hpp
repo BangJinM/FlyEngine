@@ -7,8 +7,10 @@ namespace FlyEngine::Backend
 class FlySampler : public FlyObject
 {
 public:
-    FlySampler() : FlyObject(ObjectType::SAMPLER) {}
+    FlySampler(FlyDevice *flyDevice) : FlyObject(ObjectType::SAMPLER, flyDevice) {}
     ~FlySampler() {}
+
+    virtual void Initialize(const SamplerInfo &info) = 0;
 };
 
-} // namespace FlyEngine::Backend
+}  // namespace FlyEngine::Backend

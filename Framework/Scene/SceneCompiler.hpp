@@ -11,7 +11,8 @@ namespace FlyEngine::SCENE
 {
 class SceneCompiler
 {
-    struct RsrcInfo {
+    struct RsrcInfo
+    {
         std::vector<size_t> readers;
         size_t              writer{static_cast<size_t>(-1)};
     };
@@ -24,4 +25,4 @@ private:
 public:
     void Compiler(Scene &dag);
 };
-} // namespace FlyEngine::SCENE
+}  // namespace FlyEngine::SCENE

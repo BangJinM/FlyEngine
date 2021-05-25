@@ -22,4 +22,4 @@ public:
     int AddGameObject(int index, std::string name);
 };
 
-} // namespace FlyEngine::SCENE
+}  // namespace FlyEngine::SCENE

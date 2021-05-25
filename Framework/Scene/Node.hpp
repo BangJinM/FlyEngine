@@ -16,4 +16,4 @@ protected:
     std::string name;
     NodeType    type = NodeType::UNDEFINE;
 };
-} // namespace FlyEngine::SCENE
+}  // namespace FlyEngine::SCENE

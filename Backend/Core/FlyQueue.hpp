@@ -7,8 +7,10 @@ namespace FlyEngine::Backend
 class FlyQueue : public FlyObject
 {
 public:
-    FlyQueue() : FlyObject(ObjectType::QUEUE) {}
+    FlyQueue(FlyDevice *flyDevice) : FlyObject(ObjectType::QUEUE, flyDevice) {}
     ~FlyQueue() {}
+
+    virtual void Initialize(const QueueInfo &info) = 0;
 };
 
-} // namespace FlyEngine::Backend
+}  // namespace FlyEngine::Backend

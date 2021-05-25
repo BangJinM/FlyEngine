@@ -25,4 +25,4 @@ private:
     Window *            p_Window;
 };
 
-} // namespace FlyEngine
+}  // namespace FlyEngine

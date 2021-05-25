@@ -7,8 +7,10 @@ namespace FlyEngine::Backend
 class FlyPipelineLayout : public FlyObject
 {
 public:
-    FlyPipelineLayout() : FlyObject(ObjectType::PIPELINE_LAYOUT) {}
+    FlyPipelineLayout(FlyDevice *flyDevice) : FlyObject(ObjectType::PIPELINE_LAYOUT, flyDevice) {}
     ~FlyPipelineLayout() {}
+
+    virtual void Initialize(const PipelineLayoutInfo &info) = 0;
 };
 
-} // namespace FlyEngine::Backend
+}  // namespace FlyEngine::Backend

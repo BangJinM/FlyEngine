@@ -7,8 +7,10 @@ namespace FlyEngine::Backend
 class FlyDescriptorSetLayout : public FlyObject
 {
 public:
-    FlyDescriptorSetLayout() : FlyObject(ObjectType::DESCRIPTOR_SET_LAYOUT) {}
+    FlyDescriptorSetLayout(FlyDevice *flyDevice) : FlyObject(ObjectType::DESCRIPTOR_SET_LAYOUT, flyDevice) {}
     ~FlyDescriptorSetLayout() {}
+
+    virtual void Initialize(const DescriptorSetLayoutInfo &info) = 0;
 };
 
-} // namespace FlyEngine::Backend
+}  // namespace FlyEngine::Backend

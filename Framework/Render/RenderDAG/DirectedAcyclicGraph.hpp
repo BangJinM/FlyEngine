@@ -9,13 +9,14 @@
 
 namespace FlyEngine::DAG
 {
-struct DirectedAcyclicGraph {
+struct DirectedAcyclicGraph
+{
     std::string name;
 
     //资源以及资源名字对应的位置
     std::vector<ResourceNode>  resourceNodes;
     std::map<std::string, int> resourceTableNodes;
-    //Pass和Pass名字对应的位置
+    // Pass和Pass名字对应的位置
     std::vector<PassNode>      passNodes;
     std::map<std::string, int> passTableNodes;
 
@@ -24,4 +25,4 @@ struct DirectedAcyclicGraph {
     int AddPassNode(std::string name, std::vector<int> inputs, std::vector<int> outputs);
 };
 
-} // namespace FlyEngine::DAG
+}  // namespace FlyEngine::DAG
