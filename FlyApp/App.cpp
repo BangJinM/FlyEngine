@@ -11,11 +11,12 @@ namespace FlyEngine
 void App::Init()
 {
     Memory::MemoryManager *memoryManager = Memory::MemoryManager::GetInstance();
-    File::File             file;
-    file.AddSearchPath("F:/projects/my/FlyEngine/Asset/");
-    auto shader1 = file.SyncOpenAndReadBinary("Private/Shader/sampler.vert.spv");
-    auto shader2 = file.SyncOpenAndReadBinary("Private/Shader/sampler.frag.spv");
-    auto text1   = file.SyncOpenAndReadText("Private/Shader/sampler.vert");
+    File::IFile *          file          = File::File::GetFileInstance();
+
+    file->AddSearchPath("F:/projects/my/FlyEngine/Asset/");
+    auto shader1 = file->SyncOpenAndReadBinary("Private/Shader/sampler.vert.spv");
+    auto shader2 = file->SyncOpenAndReadBinary("Private/Shader/sampler.frag.spv");
+    auto text1   = file->SyncOpenAndReadText("Private/Shader/sampler.vert");
 
     AppInfo appInfo(1024, 640, Backend::BackendFlag::Vulkan, "Vulkan");
 
@@ -28,10 +29,22 @@ void App::Init()
 
     p_FlyDevice->Initialize(appInfo);
 
+    std::string         str = "11111111111111111111111111";
     Backend::BufferInfo info;
-    info.size   = 1000;
-    info.usage  = Backend::BufferUsage::INDEX;
+    info.size  = str.size();
+    info.usage = Backend::BufferUsage::TRANSFER_DST | Backend::BufferUsage::UNIFORM;
+
+    Backend::BufferInfo stageInfo;
+    stageInfo.size            = str.size();
+    stageInfo.usage           = Backend::BufferUsage::TRANSFER_SRC;
+    stageInfo.isStagingBuffer = true;
+
+    auto stageBuffer = p_FlyDevice->CreateBuffer(stageInfo);
+    stageBuffer->CopyBuffer(str.data(), str.size());
+
     auto buffer = p_FlyDevice->CreateBuffer(info);
+    buffer->CopyBuffer(stageBuffer);
+    stageBuffer->Destroy();
     buffer->Destroy();
 
     Backend::ShaderInfo  shaderInfo;
@@ -52,8 +65,6 @@ void App::Init()
 
     auto shader = p_FlyDevice->CreateShader(shaderInfo);
     shader->Destroy();
-
-    memoryManager->Destroy();
 }
 
 void App::mainLoop()
@@ -65,6 +76,7 @@ void App::mainLoop()
     while (!p_Window->IsQuit())
     {
         p_Window->Tick();
+        p_FlyDevice->Tick();
     }
 }
 
@@ -80,6 +92,7 @@ void App::Destroy()
         p_Window->Destroy();
         delete p_Window;
     }
+    Memory::MemoryManager::GetInstance()->Destroy();
 }
 
 void App::Run()

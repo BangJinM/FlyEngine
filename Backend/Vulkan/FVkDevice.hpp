@@ -30,6 +30,7 @@ public:
     virtual FlyTexture *            CreateTexture(const TextureInfo &info) override;
 
     virtual void Initialize(const AppInfo &info) override;
+    virtual void Tick() override;
     virtual void Destroy() override;
 
     FVkContext *GetContext() { return pFVkContext; }

@@ -15,12 +15,20 @@ public:
     virtual void Initialize(const BufferInfo &info) override;
     virtual void Destroy() override;
 
+    virtual void CopyBuffer(char *bufferData, int bufferSize) override;
+    virtual void CopyBuffer(FlyBuffer *srcBuffer) override;
+
     BufferInfo &GetBufferInfo() { return bufferInfo; }
     VkBuffer &  GetBuffer() { return buffer; }
 
 private:
-    BufferInfo bufferInfo;
-    VkBuffer   buffer;
+    void createVkBuffer();
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, int size);
+
+private:
+    BufferInfo     bufferInfo;
+    VkBuffer       buffer       = NULL;
+    VkDeviceMemory bufferMemory = NULL;
 };
 
 }  // namespace FlyEngine::Backend

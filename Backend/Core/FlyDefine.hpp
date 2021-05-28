@@ -41,7 +41,14 @@ enum class ObjectType
     QUEUE,
 };
 
-enum class BufferUsage : int
+struct ColorAttachment
+{};
+typedef std::vector<ColorAttachment> ColorAttachmentList;
+
+struct DepthStencilAttachment
+{};
+
+enum BufferUsage : int
 {
     NONE = 0,
     TRANSFER_SRC,
@@ -55,9 +62,10 @@ enum class BufferUsage : int
 
 struct BufferInfo
 {
-    BufferUsage usage  = BufferUsage::NONE;
-    uint        size   = 0;
-    uint        stride = 0;
+    uint usage           = BufferUsage::NONE;
+    uint size            = 0;
+    uint stride          = 0;
+    bool isStagingBuffer = false;
 };
 
 struct CommandBufferInfo
@@ -124,6 +132,31 @@ struct ShaderInfo
 };
 
 struct TextureInfo
-{};
+{
+    int texWidth;
+    int texHeight;
+};
+
+enum InputRate
+{
+    VERTEX_INPUT_RATE_VERTEX   = 0,
+    VERTEX_INPUT_RATE_INSTANCE = 1,
+    VERTEX_INPUT_RATE_MAX_ENUM = 0x7FFFFFFF
+};
+
+struct VertexInputBindingDescription
+{
+    int       binding   = 0;
+    int       stride    = 0;
+    InputRate inputRate = InputRate::VERTEX_INPUT_RATE_MAX_ENUM;
+};
+
+struct VertexInputAttributeDescription
+{
+    int binding  = 0;
+    int location = 0;
+    int format   = 0;
+    int offset   = 0;
+};
 
 }  // namespace FlyEngine::Backend

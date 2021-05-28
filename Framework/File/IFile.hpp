@@ -31,7 +31,11 @@ public:
 
     void AddSearchPath(std::string searchPath);
 
+    static IFile *GetFileInstance();
+
 protected:
+    static IFile *           pIFile;
     std::vector<std::string> fullpathList;
 };
+
 }  // namespace FlyEngine::File

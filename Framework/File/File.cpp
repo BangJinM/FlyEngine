@@ -2,6 +2,16 @@
 
 namespace FlyEngine::File
 {
+IFile *IFile::pIFile = nullptr;
+
+IFile *IFile::GetFileInstance()
+{
+    if (pIFile)
+        return pIFile;
+    pIFile = new File;
+    return pIFile;
+}
+
 FilePtr File::OpenFile(const std::string fullPath, AssetOpenMode mode)
 {
     FILE *fp = nullptr;
@@ -91,7 +101,7 @@ bool File::FileExists(const std::string fullPath)
 
 Memory::Buffer File::SyncOpenAndReadText(const std::string filePath)
 {
-    FilePtr fp    = OpenFile(filePath, AssetOpenMode::ASSET_OPEN_TEXT);
+    FilePtr         fp    = OpenFile(filePath, AssetOpenMode::ASSET_OPEN_TEXT);
     Memory::Buffer *pBuff = nullptr;
 
     if (fp)
@@ -118,7 +128,7 @@ Memory::Buffer File::SyncOpenAndReadText(const std::string filePath)
 
 Memory::Buffer File::SyncOpenAndReadBinary(const std::string filePath)
 {
-    FilePtr fp    = OpenFile(filePath, AssetOpenMode::ASSET_OPEN_BINARY);
+    FilePtr         fp    = OpenFile(filePath, AssetOpenMode::ASSET_OPEN_BINARY);
     Memory::Buffer *pBuff = nullptr;
 
     if (fp)
@@ -141,4 +151,4 @@ Memory::Buffer File::SyncOpenAndReadBinary(const std::string filePath)
 
     return *pBuff;
 }
-}  // namespace FlyEngine::Memory
+}  // namespace FlyEngine::File

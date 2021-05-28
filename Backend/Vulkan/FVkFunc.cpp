@@ -5,22 +5,22 @@
 
 namespace FlyEngine::Backend
 {
-VkBufferUsageFlagBits MapVkBufferUsageFlagBits(BufferUsage usage)
+VkBufferUsageFlagBits MapVkBufferUsageFlagBits(uint usage)
 {
     uint flags = 0u;
-    if (usage == BufferUsage::TRANSFER_SRC)
+    if (usage & BufferUsage::TRANSFER_SRC)
         flags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-    if (usage == BufferUsage::TRANSFER_DST)
+    if (usage & BufferUsage::TRANSFER_DST)
         flags |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-    if (usage == BufferUsage::INDEX)
+    if (usage & BufferUsage::INDEX)
         flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-    if (usage == BufferUsage::VERTEX)
+    if (usage & BufferUsage::VERTEX)
         flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    if (usage == BufferUsage::UNIFORM)
+    if (usage & BufferUsage::UNIFORM)
         flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-    if (usage == BufferUsage::STORAGE)
+    if (usage & BufferUsage::STORAGE)
         flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-    if (usage == BufferUsage::INDIRECT)
+    if (usage & BufferUsage::INDIRECT)
         flags |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
     return (VkBufferUsageFlagBits)flags;
 }

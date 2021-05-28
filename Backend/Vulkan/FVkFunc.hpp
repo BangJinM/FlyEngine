@@ -3,7 +3,7 @@
 #include "FVkDefine.hpp"
 namespace FlyEngine::Backend
 {
-VkBufferUsageFlagBits MapVkBufferUsageFlagBits(BufferUsage usage);
+VkBufferUsageFlagBits MapVkBufferUsageFlagBits(uint usage);
 
 VkShaderStageFlagBits MapVkShaderStageFlagBits(ShaderStageFlagBit stage);
 

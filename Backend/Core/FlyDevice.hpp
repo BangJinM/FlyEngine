@@ -38,6 +38,7 @@ public:
     virtual FlyTexture *            CreateTexture(const TextureInfo &info)                         = 0;
 
     virtual void Initialize(const AppInfo &info) = 0;
+    virtual void Tick()                          = 0;
     virtual void Destroy()                       = 0;
 };
 }  // namespace FlyEngine::Backend

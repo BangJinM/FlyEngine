@@ -13,6 +13,9 @@ public:
 
     virtual void Initialize(const BufferInfo &info) = 0;
 
+    virtual void CopyBuffer(char *bufferData, int bufferSize) = 0;
+    virtual void CopyBuffer(FlyBuffer *srcBuffer)             = 0;
+
     FlyDevice *GetDevice() { return pFlyDevice; }
 };
 

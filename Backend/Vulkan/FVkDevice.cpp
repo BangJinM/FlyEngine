@@ -115,6 +115,11 @@ void FVkDevice::Initialize(const AppInfo &info)
     pFVkContext->Initialize(info);
 }
 
+void FVkDevice::Tick() 
+{
+    pFVkContext->Draw();
+}
+
 void FVkDevice::Destroy()
 {
     if (pFVkContext)
