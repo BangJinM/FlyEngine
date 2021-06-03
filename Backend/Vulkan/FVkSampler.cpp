@@ -7,7 +7,7 @@ namespace FlyEngine::Backend
 void FVkSampler::Destroy()
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     vkDestroySampler(device, textureSampler, nullptr);
 }
@@ -15,7 +15,7 @@ void FVkSampler::Destroy()
 void FVkSampler::Initialize(const SamplerInfo &info)
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;

@@ -8,7 +8,7 @@ namespace FlyEngine::Backend
 void FVkShader::Destroy()
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     for (size_t i = 0; i < stages.size(); i++)
     {
@@ -19,7 +19,7 @@ void FVkShader::Destroy()
 void FVkShader::Initialize(const ShaderInfo &info)
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     for (size_t i = 0; i < info.shaderStageList.size(); i++)
     {
@@ -40,7 +40,7 @@ void FVkShader::Initialize(const ShaderInfo &info)
 VkShaderModule FVkShader::createShaderModule(const std::string source)
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

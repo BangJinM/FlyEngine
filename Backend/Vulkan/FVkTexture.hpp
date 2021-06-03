@@ -16,13 +16,16 @@ public:
     virtual void Initialize(const TextureInfo &info) override;
     virtual void CopyBufferToImage(FlyBuffer *srcBuffer, uint32_t width, uint32_t height) override;
 
-private:
-    void createImageView();
+    VkImage& GetVkImage(){return textureImage;}
 
 private:
+    void createImage();
+
+private:
+    TextureInfo textureInfo;
+
     VkImage        textureImage;
     VkDeviceMemory bufferMemory = NULL;
-    VkImageView    textureView;
 };
 
 }  // namespace FlyEngine::Backend

@@ -22,12 +22,12 @@ void App::Init()
 
     p_Window = new Window();
     p_Window->Init(appInfo);
-    appInfo.windowHandle = p_Window->GetWindowHandle();
+    appInfo.windowHandle = p_Window;
     if (!p_Window)
         throw std::runtime_error("Window Init failed!");
     p_FlyDevice = Backend::CreateDevice(appInfo.backend);
 
-    p_FlyDevice->Initialize(appInfo);
+    p_FlyDevice->Initialize(p_Window);
 
     std::string         str = "11111111111111111111111111";
     Backend::BufferInfo info;
@@ -53,12 +53,12 @@ void App::Init()
 
     char *c = reinterpret_cast<char *>(shader1.GetData());
 
-    vertexStage.stage  = Backend::ShaderStageFlags::VERTEX;
+    vertexStage.stage  = Backend::ShaderStageFlagBit::VERTEX;
     vertexStage.source = std::string(c, c + shader1.GetDataSize());
 
     c = reinterpret_cast<char *>(shader2.GetData());
 
-    fragStage.stage  = Backend::ShaderStageFlags::FRAGMENT;
+    fragStage.stage  = Backend::ShaderStageFlagBit::FRAGMENT;
     fragStage.source = std::string(c, c + shader2.GetDataSize());
 
     shaderInfo.shaderStageList = {vertexStage, fragStage};
@@ -76,7 +76,10 @@ void App::mainLoop()
     while (!p_Window->IsQuit())
     {
         p_Window->Tick();
-        p_FlyDevice->Tick();
+        p_FlyDevice->BeginDraw();
+        p_FlyDevice->Draw();
+        p_FlyDevice->EndDraw();
+
     }
 }
 

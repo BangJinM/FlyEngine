@@ -4,5 +4,7 @@ namespace FlyEngine::Backend
 {
 void FVkCommandBuffer::Destroy() {}
 
-void FVkCommandBuffer::Initialize(const CommandBufferInfo &info) {}
+void FVkCommandBuffer::Initialize(const CommandBufferInfo &info) {
+    
+}
 }  // namespace FlyEngine::Backend

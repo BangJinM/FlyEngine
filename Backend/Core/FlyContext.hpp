@@ -9,8 +9,8 @@ namespace FlyEngine::Backend
 class FlyContext
 {
 public:
-    virtual void Initialize(const AppInfo &info) = 0;
-    virtual void Destroy()                       = 0;
+    virtual void Initialize(WindowBase *window) = 0;
+    virtual void Destroy()                      = 0;
 };
 
 }  // namespace FlyEngine::Backend

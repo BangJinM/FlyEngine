@@ -14,6 +14,8 @@ public:
     virtual void Destroy() override;
     virtual void Initialize(const RenderPassInfo &info) override;
 
+    VkRenderPass &GetVkRenderPass() { return renderPass; }
+
 private:
     VkRenderPass renderPass;
 };

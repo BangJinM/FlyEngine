@@ -18,6 +18,11 @@
 
 #include "../../FlyApp/AppInfo.hpp"
 
+namespace FlyEngine
+{
+class WindowBase;
+}
+
 namespace FlyEngine::Backend
 {
 class FlyDevice
@@ -37,8 +42,11 @@ public:
     virtual FlyShader *             CreateShader(const ShaderInfo &info)                           = 0;
     virtual FlyTexture *            CreateTexture(const TextureInfo &info)                         = 0;
 
-    virtual void Initialize(const AppInfo &info) = 0;
-    virtual void Tick()                          = 0;
-    virtual void Destroy()                       = 0;
+    virtual void Initialize(WindowBase *window) = 0;
+    virtual void Destroy()                      = 0;
+
+    virtual void BeginDraw() = 0;
+    virtual void Draw()      = 0;
+    virtual void EndDraw()   = 0;
 };
 }  // namespace FlyEngine::Backend

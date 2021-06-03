@@ -18,7 +18,7 @@ void FVkQueue::Initialize(const QueueInfo &info)
     //     case QueueType::TRANSFER: queueType = VK_QUEUE_TRANSFER_BIT; break;
     // }
 
-    // const CCVKGPUContext *context = ((CCVKContext *)device->getContext())->gpuContext();
+    // const CCVKGPUContext *context = ((CCVKContext *)device)->gpuContext();
 
     // size_t queueCount = context->queueFamilyProperties.size();
     // for (size_t i = 0u; i < queueCount; ++i)

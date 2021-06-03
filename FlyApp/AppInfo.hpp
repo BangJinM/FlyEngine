@@ -1,12 +1,13 @@
 #pragma once
 
+#include <string>
 #include "Backend/BackendEnum.hpp"
-
 namespace FlyEngine
 {
+class WindowBase;
 struct AppInfo
 {
-    void *               windowHandle = 0;
+    WindowBase *         windowHandle = 0;
     std::string          name;
     int                  width        = 0;
     int                  height       = 0;

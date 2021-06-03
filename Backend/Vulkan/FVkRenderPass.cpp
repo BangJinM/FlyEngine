@@ -1,5 +1,7 @@
 #include "FVkRenderPass.hpp"
 
+#include <iostream>
+
 #include "FVkDevice.hpp"
 
 namespace FlyEngine::Backend
@@ -7,7 +9,7 @@ namespace FlyEngine::Backend
 void FVkRenderPass::Destroy()
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     vkDestroyRenderPass(device, renderPass, nullptr);
 }
@@ -15,7 +17,7 @@ void FVkRenderPass::Destroy()
 void FVkRenderPass::Initialize(const RenderPassInfo &info)
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format         = VK_FORMAT_B8G8R8A8_SRGB;
@@ -44,6 +46,8 @@ void FVkRenderPass::Initialize(const RenderPassInfo &info)
     renderPassInfo.pSubpasses      = &subpass;
 
     if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
-    {}
+    {
+        throw std::runtime_error("failed to create render pass!");
+    }
 }
 }  // namespace FlyEngine::Backend

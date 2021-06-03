@@ -11,7 +11,7 @@ void FVkPipelineState::Destroy() {}
 void FVkPipelineState::Initialize(const PipelineStateInfo &info)
 {
     // FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    // VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    // VkDevice & device    = fVkDevice->GetVkDevice();
 
     // FVkShader *shader = (FVkShader *)info.shader;
     // auto       stages = shader->GetStages();

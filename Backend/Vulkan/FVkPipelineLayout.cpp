@@ -7,7 +7,7 @@ namespace FlyEngine::Backend
 void FVkPipelineLayout::Destroy()
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 }
@@ -15,7 +15,7 @@ void FVkPipelineLayout::Destroy()
 void FVkPipelineLayout::Initialize(const PipelineLayoutInfo &info)
 {
     FVkDevice *fVkDevice = (FVkDevice *)pFlyDevice;
-    VkDevice & device    = fVkDevice->GetContext()->GetVkDevice();
+    VkDevice & device    = fVkDevice->GetVkDevice();
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

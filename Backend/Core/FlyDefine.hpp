@@ -21,12 +21,36 @@ class FlyRenderPass;
 class FlySampler;
 class FlyShader;
 class FlyTexture;
+class FlyTextureView;
+
+enum class ShaderStageFlagBit : uint
+{
+    NONE       = 0x0,
+    VERTEX     = 0x1,
+    CONTROL    = 0x2,
+    EVALUATION = 0x4,
+    GEOMETRY   = 0x8,
+    FRAGMENT   = 0x10,
+    COMPUTE    = 0x20,
+    ALL        = 0x3f,
+};
+
+enum class DescriptorType : uint
+{
+    UNKNOWN                = 0,
+    UNIFORM_BUFFER         = 0x1,
+    DYNAMIC_UNIFORM_BUFFER = 0x2,
+    STORAGE_BUFFER         = 0x4,
+    DYNAMIC_STORAGE_BUFFER = 0x8,
+    SAMPLER                = 0x10,
+};
 
 enum class ObjectType
 {
     UNKNOWN,
     BUFFER,
     TEXTURE,
+    TEXTURE_VIEW,
     RENDER_PASS,
     FRAMEBUFFER,
     SAMPLER,
@@ -74,14 +98,27 @@ struct CommandBufferInfo
 struct DescriptorSetInfo
 {};
 
+struct DescriptorSetLayoutBindingInfo
+{
+    int                binding         = 0;
+    int                descriptorCount = 1;
+    DescriptorType     descriptorType  = DescriptorType::DYNAMIC_UNIFORM_BUFFER;
+    ShaderStageFlagBit stageFlags      = ShaderStageFlagBit::VERTEX;
+};
+
 struct DescriptorSetLayoutInfo
-{};
+{
+    std::vector<DescriptorSetLayoutBindingInfo> descriptorSetLayoutBindingInfoList;
+};
 
 struct FenceInfo
 {};
 
 struct FramebufferInfo
-{};
+{
+    FlyRenderPass *               renderPass;
+    std::vector<FlyTextureView *> views;
+};
 
 struct InputAssemblerInfo
 {};
@@ -104,19 +141,6 @@ struct RenderPassInfo
 struct SamplerInfo
 {};
 
-enum class ShaderStageFlagBit : int
-{
-    NONE       = 0x0,
-    VERTEX     = 0x1,
-    CONTROL    = 0x2,
-    EVALUATION = 0x4,
-    GEOMETRY   = 0x8,
-    FRAGMENT   = 0x10,
-    COMPUTE    = 0x20,
-    ALL        = 0x3f,
-};
-typedef ShaderStageFlagBit ShaderStageFlags;
-
 struct ShaderStage
 {
     ShaderStageFlagBit stage;
@@ -129,6 +153,11 @@ struct ShaderInfo
 {
     ShaderStageList shaderStageList;
     std::string     name = "";
+};
+
+struct TextureViewInfo
+{
+    FlyTexture *texture;
 };
 
 struct TextureInfo
