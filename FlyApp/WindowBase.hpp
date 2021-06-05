@@ -7,7 +7,7 @@ namespace FlyEngine
 class WindowBase
 {
 public:
-    static WindowBase *CreateWindow(AppInfo info);
+    static WindowBase *CreateFlyEngineWindow(AppInfo info);
     virtual void       CreateSurface(void *graphicsInstance, void *surfData) = 0;
     virtual void       GetFrameSize(int &width, int &height)                 = 0;
     virtual void       WaitForNewWindowSize()                                = 0;

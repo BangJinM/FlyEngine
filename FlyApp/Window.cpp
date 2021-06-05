@@ -2,7 +2,7 @@
 
 namespace FlyEngine
 {
-Window *Window::CreateWindow(AppInfo info)
+Window *Window::CreateFlyEngineWindow(AppInfo info)
 {
     Window *window = new Window();
     if (window->Init(info))

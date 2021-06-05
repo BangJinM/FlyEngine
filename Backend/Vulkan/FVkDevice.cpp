@@ -4,6 +4,8 @@
 #include <set>
 #include <string>
 
+#include "../Backend.hpp"
+
 #include "../../FlyApp/WindowBase.hpp"
 #include "FVkBuffer.hpp"
 #include "FVkCommandBuffer.hpp"

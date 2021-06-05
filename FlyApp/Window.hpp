@@ -13,7 +13,7 @@ private:
     GLFWwindow *p_window;
 
 public:
-    static Window *CreateWindow(AppInfo info);
+    static Window *CreateFlyEngineWindow(AppInfo info);
     virtual void   CreateSurface(void *graphicsInstance, void *surfData) override;
     virtual void   GetFrameSize(int &width, int &height) override;
     virtual void   WaitForNewWindowSize() override;

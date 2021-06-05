@@ -3,6 +3,8 @@
 #include <iostream>
 #include "FVkFunc.hpp"
 
+#include "Logger/Logger.hpp"
+
 namespace FlyEngine::Backend
 {
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
@@ -10,7 +12,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
                                                     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
                                                     void *                                      pUserData)
 {
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+
+    LOG(INFO) << "validation layer: " << pCallbackData->pMessage;
 
     return VK_FALSE;
 }
