@@ -33,11 +33,10 @@ project(FlyEngine VERSION 0.0.1)
 message(STATUS "[Project] ${PROJECT_NAME}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
-include_directories("${PROJECT_SOURCE_DIR}/Framework/")
+include_directories("${PROJECT_SOURCE_DIR}/Engine/")
+include_directories("${PROJECT_SOURCE_DIR}/Engine/Core")
 
-add_subdirectory(Backend)
-add_subdirectory(Framework)
-add_subdirectory(FlyApp)
-
+add_subdirectory(Engine)
+add_subdirectory(Game)
 
 message(STATUS "[Project] ${Vulkan_INCLUDE_DIRS}")
