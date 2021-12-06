@@ -1,0 +1,6 @@
+include_directories("${PROJECT_SOURCE_DIR}/Engine/Platforms")
+
+include(Core/CmakeLists.txt)
+include(Core/CmakeLists.txt)
+
+add_library(platform_lib ${PLATFORM_CORE_FILES} ${PLATFORM_WIN32_FILES})

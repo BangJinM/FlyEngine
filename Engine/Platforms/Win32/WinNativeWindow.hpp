@@ -1,0 +1,7 @@
+#pragma once
+
+#include "Core/PlatformDefine.h"
+
+FLYENGINE_PLATFORM_BEGIN_NAMESPACE
+
+FLYENGINE_END_NAMESPACE
