@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 #include "Game.hpp"
 #include "Interface/IGameLogic.hpp"
 

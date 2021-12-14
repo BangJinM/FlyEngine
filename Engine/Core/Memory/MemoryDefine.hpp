@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 
 FLYENGINE_CORE_BEGIN_NAMESPACE
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 
 #define FLYENGINE_PLATFORM_BEGIN_NAMESPACE FLYENGINE_BEGIN_NAMESPACE(platform)
 #define USING_FLYENGINE_PLATFORM_NAMESPACE USING_FLYENGINE_NAMESPACE(platform)

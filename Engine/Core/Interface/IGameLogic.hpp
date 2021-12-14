@@ -14,6 +14,4 @@ public:
     virtual void Tick(float deltaTime) = 0;
 };
 
-extern IGameLogic *g_pGameLogic;
-
 FLYENGINE_END_NAMESPACE

@@ -11,6 +11,6 @@ set(ALL_FILES
 )
 
 find_package(glfw3 CONFIG REQUIRED)
-link_libraries(glfw)
+link_libraries(glfw platform_lib graphic_lib)
 
 add_library(fly_engine_core_lib ${ALL_FILES})

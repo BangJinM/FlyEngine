@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
+#include "GraphicsCore/GraphicsFactory.hpp"
 #include "Interface/IApplication.h"
 #include "Interface/IRuntimeModule.h"
 
@@ -18,7 +19,7 @@ private:
     static void mouseWheelCallback(GLFWwindow *wnd, double dx, double dy);
 
 public:
-    virtual bool CreateWindow(const char *Title, int Width, int Height, int GlfwApiHint);
+    virtual bool CreateEngineWindow(const char *Title, int Width, int Height, int GlfwApiHint);
     virtual bool InitEngine(int DevType);
 
     virtual bool Initialize();
@@ -27,7 +28,8 @@ public:
     virtual bool IsQuit();
 
 public:
-    GLFWwindow *                  m_pWindow = nullptr;
+    GLFWwindow                   *m_pWindow = nullptr;
     std::vector<IRuntimeModule *> m_runtimeModules;
+    Graphics::GraphicsFactory    *m_pGraphicsFactory;
 };
 FLYENGINE_END_NAMESPACE

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 
 FLYENGINE_CORE_BEGIN_NAMESPACE
 
@@ -15,11 +15,11 @@ public:
 
     virtual bool IsQuit() = 0;
 
-    virtual bool CreateWindow(const char *Title, int Width, int Height, int GlfwApiHint = 0) = 0;
+    virtual bool CreateEngineWindow(const char *Title, int Width, int Height, int GlfwApiHint = 0) = 0;
 
     virtual bool InitEngine(int DevType) = 0;
 };
 
-extern IApplication *g_pApp;
+extern IApplication *g_pApplication;
 
 FLYENGINE_END_NAMESPACE

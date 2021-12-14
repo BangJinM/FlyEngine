@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 #include "Interface/IGameLogic.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE(FlyGame)

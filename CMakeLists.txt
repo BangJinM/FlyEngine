@@ -2,17 +2,6 @@
 set (CMAKE_C_STANDARD 17)
 set (CMAKE_CXX_STANDARD 17)
 
-if (CMAKE_HOST_WIN32)
-    set(WINDOWS 1)
-    set(VULKAN 1)
-    add_definitions("-D WIN32")
-    add_definitions("-D BACKEND_VULKAN")
-elseif(CMAKE_HOST_APPLE)
-    set(MACOS 1)
-elseif(CMAKE_HOST_UNIX)
-    set(LINUX 1)
-endif()
-
 
 if(WINDOWS)
     set(VCPKG_TARGET_TRIPLET x86-windows)
@@ -35,6 +24,25 @@ message(STATUS "[Project] ${PROJECT_NAME}")
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/Engine/")
 include_directories("${PROJECT_SOURCE_DIR}/Engine/Core")
+include_directories("${PROJECT_SOURCE_DIR}/Engine/Platforms")
+include_directories("${PROJECT_SOURCE_DIR}/Engine/Graphics")
+
+if(CMAKE_HOST_WIN32)
+    add_definitions("-D_CRT_SECURE_NO_WARNINGS")
+	add_definitions("-DVK_USE_PLATFORM_WIN32_KHR")
+    add_definitions("-DFLYENGINE_PLATFORM_WIN32")
+    find_package(Vulkan REQUIRED FATAL_ERROR)
+
+    include_directories ( 
+        PUBLIC ${Vulkan_INCLUDE_DIRS}
+    )
+# elseif(CMAKE_HOST_APPLE)
+# 	add_definitions("-DVK_USE_PLATFORM_METAL_EXT")
+# elseif(COCOS_PLATFORM_ANDROID)
+# 	add_definitions("-DVK_USE_PLATFORM_ANDROID_KHR")
+# else()
+# 	add_definitions("-DVK_USE_PLATFORM_XLIB_KHR")
+endif()
 
 add_subdirectory(Engine)
 add_subdirectory(Game)

@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 
 FLYENGINE_CORE_BEGIN_NAMESPACE
 struct BlockHeader
@@ -14,7 +14,7 @@ struct BlockHeader
 
 struct PageHeader
 {
-    PageHeader * pNext;
+    PageHeader  *pNext;
     BlockHeader *Blocks() { return reinterpret_cast<BlockHeader *>(this + 1); }
 };
 

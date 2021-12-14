@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Allocator.hpp"
-#include "Common/BaseDefines.h"
+#include "Common/BaseDefines.hpp"
 #include "Interface/IRuntimeModule.h"
 
 FLYENGINE_CORE_BEGIN_NAMESPACE
@@ -19,7 +19,7 @@ public:
     void  Free(void *p, size_t size, size_t alignment);
 
 private:
-    static size_t *   m_pBlockSizeLookup;
+    static size_t    *m_pBlockSizeLookup;
     static Allocator *m_pAllocators;
     static bool       m_bInitialized;
 

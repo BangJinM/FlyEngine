@@ -1,12 +1,19 @@
-#include "GLFWApp.h"
+#include "GLFWApp.hpp"
+
 #include "Interface/IApplication.h"
 #include "Interface/IGameLogic.hpp"
 #include "Interface/IRuntimeModule.h"
 
+#include "GraphicsVulkan/VulkanFactory.hpp"
+#include "Platforms/NativeWindow.hpp"
+
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include "GLFW/glfw3native.h"
+
 FLYENGINE_CORE_BEGIN_NAMESPACE
 
-extern IApplication *  g_pApp;
-extern IGameLogic *    g_pGameLogic;
+extern IApplication   *g_pApplication;
+extern IGameLogic     *g_pGameLogic;
 extern IRuntimeModule *g_pMemoryManager;
 
 void GLFWApp::resizeCallback(GLFWwindow *wnd, int w, int h)
@@ -35,7 +42,7 @@ void GLFWApp::cursorPosCallback(GLFWwindow *wnd, double xpos, double ypos)
 }
 void GLFWApp::mouseWheelCallback(GLFWwindow *wnd, double dx, double dy) {}
 
-bool GLFWApp::CreateWindow(const char *Title, int Width, int Height, int GlfwApiHint)
+bool GLFWApp::CreateEngineWindow(const char *Title, int Width, int Height, int GlfwApiHint)
 {
     if (glfwInit() != GLFW_TRUE)
         return false;
@@ -81,8 +88,13 @@ bool GLFWApp::Initialize()
         if (!flag)
             return false;
     }
-    // p_FlyDevice = Backend::CreateDevice(Backend::BackendFlag::Vulkan);
-    // p_FlyDevice->Initialize(m_pWindow);
+    // Init Native Window
+    platform::NativeWindow nativeWindow(glfwGetWin32Window(m_pWindow));
+
+    // Init Graphics Engine
+    m_pGraphicsFactory = new Graphics::VulkanFactory(nativeWindow);
+    m_pGraphicsFactory->Initialize();
+
     return true;
 }
 
@@ -91,6 +103,10 @@ bool GLFWApp::Finalize()
     for (auto module : m_runtimeModules)
         if (module)
             module->Finalize();
+
+    if (m_pGraphicsFactory)
+        m_pGraphicsFactory->Finalize();
+
     if (m_pWindow)
     {
         glfwDestroyWindow(m_pWindow);
@@ -110,8 +126,7 @@ void GLFWApp::Tick(float deltaTime)
     int w, h;
     glfwGetWindowSize(m_pWindow, &w, &h);
     if (w > 0 && h > 0)
-    {}
-    // Draw();
+        m_pGraphicsFactory->Tick(deltaTime);
 }
 
 bool GLFWApp::IsQuit()
