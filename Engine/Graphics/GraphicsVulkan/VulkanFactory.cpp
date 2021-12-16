@@ -1,109 +1,111 @@
 #include "VulkanFactory.hpp"
 
-#include "VulkanBuffer.hpp"
-#include "VulkanCommandBuffer.hpp"
-#include "VulkanContext.hpp"
-#include "VulkanDescriptorSet.hpp"
-#include "VulkanDescriptorSetLayout.hpp"
-#include "VulkanDevice.hpp"
-#include "VulkanFence.hpp"
-#include "VulkanFramebuffer.hpp"
-#include "VulkanInputAssembler.hpp"
-#include "VulkanInstance.hpp"
-#include "VulkanPipelineLayout.hpp"
-#include "VulkanQueue.hpp"
-#include "VulkanRenderPass.hpp"
-#include "VulkanSampler.hpp"
-#include "VulkanShader.hpp"
-#include "VulkanSwapChain.hpp"
-#include "VulkanTexture.hpp"
+#include <iostream>
+
+#include "BufferVk.hpp"
+#include "CommandBufferVk.hpp"
+#include "ContextVk.hpp"
+#include "DescriptorSetLayoutVk.hpp"
+#include "DescriptorSetVk.hpp"
+#include "DeviceVk.hpp"
+#include "FenceVk.hpp"
+#include "FramebufferVk.hpp"
+#include "ImageVk.hpp"
+#include "InputAssemblerVk.hpp"
+#include "InstanceVk.hpp"
+#include "PipelineLayoutVk.hpp"
+#include "QueueVk.hpp"
+#include "RenderPassVk.hpp"
+#include "SamplerVk.hpp"
+#include "ShaderStageVk.hpp"
+#include "SwapChainVk.hpp"
 
 #include "Platforms/NativeWindow.hpp"
 
 FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
 
-GBuffer *VulkanFactory::CreateBuffer()
+Buffer *VulkanFactory::CreateBuffer()
 {
-    auto vBuffer = new VulkanBuffer();
+    auto vBuffer = new BufferVk();
     vBuffer->Initialize();
     return vBuffer;
 }
-GCommandBuffer *VulkanFactory::CreateCommandBuffer()
+CommandBuffer *VulkanFactory::CreateCommandBuffer()
 {
-    auto vCommandBuffer = new VulkanCommandBuffer();
+    auto vCommandBuffer = new CommandBufferVk();
     vCommandBuffer->Initialize();
     return vCommandBuffer;
 }
-GDescriptorSet *VulkanFactory::CreateDescriptorSet()
+DescriptorSet *VulkanFactory::CreateDescriptorSet()
 {
-    auto vDescriptorSet = new VulkanDescriptorSet();
+    auto vDescriptorSet = new DescriptorSetVk();
     vDescriptorSet->Initialize();
     return vDescriptorSet;
 }
-GDescriptorSetLayout *VulkanFactory::CreateDescriptorSetLayout()
+DescriptorSetLayout *VulkanFactory::CreateDescriptorSetLayout()
 {
-    auto vDescriptorSetLayout = new VulkanDescriptorSetLayout();
+    auto vDescriptorSetLayout = new DescriptorSetLayoutVk();
     vDescriptorSetLayout->Initialize();
     return vDescriptorSetLayout;
 }
-GFence *VulkanFactory::CreateFence()
+Fence *VulkanFactory::CreateFence()
 {
-    auto vFence = new VulkanFence();
+    auto vFence = new FenceVk(this);
     vFence->Initialize();
     return vFence;
 }
-GFramebuffer *VulkanFactory::CreateFramebuffer()
+Framebuffer *VulkanFactory::CreateFramebuffer()
 {
-    auto vFramebuffer = new VulkanFramebuffer();
+    auto vFramebuffer = new FramebufferVk();
     vFramebuffer->Initialize();
     return vFramebuffer;
 }
-GInputAssembler *VulkanFactory::CreateInputAssembler()
+InputAssembler *VulkanFactory::CreateInputAssembler()
 {
-    auto vInputAssembler = new VulkanInputAssembler();
+    auto vInputAssembler = new InputAssemblerVk();
     vInputAssembler->Initialize();
     return vInputAssembler;
 }
-GPipelineLayout *VulkanFactory::CreatePipelineLayout()
+PipelineLayout *VulkanFactory::CreatePipelineLayout()
 {
-    auto vPipelineLayout = new VulkanPipelineLayout();
+    auto vPipelineLayout = new PipelineLayoutVk();
     vPipelineLayout->Initialize();
     return vPipelineLayout;
 }
-GQueue *VulkanFactory::CreateQueue()
+Queue *VulkanFactory::CreateQueue()
 {
-    auto vQueue = new VulkanQueue();
+    auto vQueue = new QueueVk();
     vQueue->Initialize();
     return vQueue;
 }
-GRenderPass *VulkanFactory::CreateRenderPass()
+RenderPass *VulkanFactory::CreateRenderPass()
 {
-    auto vRenderPass = new VulkanRenderPass();
+    auto vRenderPass = new RenderPassVk(this);
     vRenderPass->Initialize();
     return vRenderPass;
 }
-GSampler *VulkanFactory::CreateSampler()
+Sampler *VulkanFactory::CreateSampler()
 {
-    auto vSampler = new VulkanSampler();
+    auto vSampler = new SamplerVk();
     vSampler->Initialize();
     return vSampler;
 }
-GShader *VulkanFactory::CreateShader()
+ShaderStage *VulkanFactory::CreateShader(ShaderStageInfo shaderInfo)
 {
-    auto vShader = new VulkanShader();
+    auto vShader = new ShaderStageVk(this, shaderInfo);
     vShader->Initialize();
     return vShader;
 }
-GTexture *VulkanFactory::CreateTexture()
+Image *VulkanFactory::CreateTexture()
 {
-    auto vTexture = new VulkanTexture();
+    auto vTexture = new ImageVk();
     vTexture->Initialize();
     return vTexture;
 }
 
-GContext *VulkanFactory::CreateContext()
+Context *VulkanFactory::CreateContext()
 {
-    auto vContext = new VulkanContext();
+    auto vContext = new ContextVk();
     vContext->Initialize();
     return vContext;
 }
@@ -115,7 +117,7 @@ VulkanFactory::VulkanFactory(platform::NativeWindow window)
 
 bool VulkanFactory::Initialize()
 {
-    m_pVInstance = new VulkanInstance();
+    m_pVInstance = new InstanceVk();
     m_pVInstance->Initialize();
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -178,11 +180,17 @@ bool VulkanFactory::Initialize()
 #    pragma error Platform not supported
 #endif
 
-    m_pDevice = new VulkanDevice(this);
+    m_pDevice = new DeviceVk(this);
     m_pDevice->Initialize();
 
-    m_pVulkanSwapChain = new VulkanSwapChain(this);
+    m_pVulkanSwapChain = new SwapChainVk(this);
     m_pVulkanSwapChain->Initialize();
+
+    renderPass = (RenderPassVk *)this->CreateRenderPass();
+
+    createFramebuffers();
+    createCommandPool();
+    createCommandBuffers();
 
     return true;
 }
@@ -193,5 +201,147 @@ bool VulkanFactory::Finalize()
     return true;
 }
 void VulkanFactory::Tick(float deltaTime) {}
+
+void VulkanFactory::createFramebuffers()
+{
+    auto imageCount      = m_pVulkanSwapChain->GetImageCount();
+    auto swapChainExtent = m_pVulkanSwapChain->GetSwapChainExtent();
+    swapChainFramebuffers.resize(imageCount);
+
+    for (size_t i = 0; i < imageCount; i++)
+    {
+        VkImageView attachments[] = {m_pVulkanSwapChain->getImageView(i)};
+
+        VkFramebufferCreateInfo framebufferInfo{};
+        framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass      = renderPass->GetVkRenderPass();
+        framebufferInfo.attachmentCount = 1;
+        framebufferInfo.pAttachments    = attachments;
+        framebufferInfo.width           = swapChainExtent.width;
+        framebufferInfo.height          = swapChainExtent.height;
+        framebufferInfo.layers          = 1;
+
+        if (vkCreateFramebuffer(m_pDevice->GetLogicalDevice(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create framebuffer!");
+        }
+    }
+}
+
+void VulkanFactory::createCommandPool()
+{
+    QueueFamilyIndices queueFamilyIndices = m_pDevice->FindQueueFamilies(m_pDevice->GetVkPhysicalDevice());
+
+    VkCommandPoolCreateInfo poolInfo{};
+    poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+
+    if (vkCreateCommandPool(m_pDevice->GetLogicalDevice(), &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create command pool!");
+    }
+}
+
+void VulkanFactory::createCommandBuffers()
+{
+    auto swapChainExtent = m_pVulkanSwapChain->GetSwapChainExtent();
+
+    m_commandBuffers.resize(swapChainFramebuffers.size());
+
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool        = m_commandPool;
+    allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
+
+    if (vkAllocateCommandBuffers(m_pDevice->GetLogicalDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to allocate command buffers!");
+    }
+}
+
+void VulkanFactory::prepareFrame()
+{
+    if (!m_pVulkanSwapChain->Acquire())
+    {
+        std::runtime_error("This shouldn't happen");
+    }
+    VkFence fence = m_pVulkanSwapChain->GetFence();
+
+    VkResult result{VK_SUCCESS};
+    do
+    {
+        result = vkWaitForFences(m_pDevice->GetLogicalDevice(), 1, &fence, VK_TRUE, UINT64_MAX);
+    } while (result == VK_TIMEOUT);
+    if (result != VK_SUCCESS)
+    {  // This allows Aftermath to do things and later assert below
+#ifdef _WIN32
+        Sleep(1000);
+#else
+        usleep(1000);
+#endif
+    }
+    assert(result == VK_SUCCESS);
+}
+
+void VulkanFactory::beginCommand()
+{
+    uint32_t imageIndex = m_pVulkanSwapChain->getActiveImageIndex();
+    auto     cmdBuf     = m_commandBuffers[imageIndex];
+
+    VkCommandBufferBeginInfo beginInfo{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    vkBeginCommandBuffer(cmdBuf, &beginInfo);
+}
+void VulkanFactory::endCommand()
+{
+    uint32_t imageIndex = m_pVulkanSwapChain->getActiveImageIndex();
+    auto     cmdBuf     = m_commandBuffers[imageIndex];
+    // Submit for display
+    vkEndCommandBuffer(cmdBuf);
+}
+
+void VulkanFactory::submitFrame()
+{
+    uint32_t imageIndex = m_pVulkanSwapChain->getActiveImageIndex();
+
+    VkFence fence = m_pVulkanSwapChain->GetFence();
+    vkResetFences(m_pDevice->GetLogicalDevice(), 1, &fence);
+
+    // In case of using NVLINK
+    bool                          m_useNvlink = false;
+    const uint32_t                deviceMask  = m_useNvlink ? 0b0000'0011 : 0b0000'0001;
+    const std::array<uint32_t, 2> deviceIndex = {0, 1};
+
+    VkDeviceGroupSubmitInfo deviceGroupSubmitInfo{VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO_KHR};
+    deviceGroupSubmitInfo.waitSemaphoreCount            = 1;
+    deviceGroupSubmitInfo.commandBufferCount            = 1;
+    deviceGroupSubmitInfo.pCommandBufferDeviceMasks     = &deviceMask;
+    deviceGroupSubmitInfo.signalSemaphoreCount          = m_useNvlink ? 2 : 1;
+    deviceGroupSubmitInfo.pSignalSemaphoreDeviceIndices = deviceIndex.data();
+    deviceGroupSubmitInfo.pWaitSemaphoreDeviceIndices   = deviceIndex.data();
+
+    VkSemaphore semaphoreRead  = m_pVulkanSwapChain->getActiveReadSemaphore();
+    VkSemaphore semaphoreWrite = m_pVulkanSwapChain->getActiveWrittenSemaphore();
+
+    // Pipeline stage at which the queue submission will wait (via pWaitSemaphores)
+    const VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    // The submit info structure specifies a command buffer queue submission batch
+    VkSubmitInfo submitInfo{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+    submitInfo.pWaitDstStageMask    = &waitStageMask;   // Pointer to the list of pipeline stages that the semaphore waits will occur at
+    submitInfo.pWaitSemaphores      = &semaphoreRead;   // Semaphore(s) to wait upon before the submitted command buffer starts executing
+    submitInfo.waitSemaphoreCount   = 1;                // One wait semaphore
+    submitInfo.pSignalSemaphores    = &semaphoreWrite;  // Semaphore(s) to be signaled when command buffers have completed
+    submitInfo.signalSemaphoreCount = 1;                // One signal semaphore
+    submitInfo.pCommandBuffers      = &m_commandBuffers[imageIndex];  // Command buffers(s) to execute in this batch (submission)
+    submitInfo.commandBufferCount   = 1;                              // One command buffer
+    submitInfo.pNext                = &deviceGroupSubmitInfo;
+
+    // Submit to the graphics queue passing a wait fence
+    vkQueueSubmit(m_pDevice->m_graphicsQueue, 1, &submitInfo, fence);
+
+    // Presenting frame
+    m_pVulkanSwapChain->QueuePresent(m_pDevice->m_presentQueue);
+}
 
 FLYENGINE_END_NAMESPACE

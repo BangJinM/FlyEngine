@@ -7,27 +7,28 @@
 
 FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
 
-class VulkanInstance;
-class VulkanDevice;
-class VulkanSwapChain;
+class InstanceVk;
+class DeviceVk;
+class SwapChainVk;
+class RenderPassVk;
 
 class VulkanFactory : public GraphicsFactory
 {
 public:
-    virtual GBuffer              *CreateBuffer();
-    virtual GCommandBuffer       *CreateCommandBuffer();
-    virtual GDescriptorSet       *CreateDescriptorSet();
-    virtual GDescriptorSetLayout *CreateDescriptorSetLayout();
-    virtual GFence               *CreateFence();
-    virtual GFramebuffer         *CreateFramebuffer();
-    virtual GInputAssembler      *CreateInputAssembler();
-    virtual GPipelineLayout      *CreatePipelineLayout();
-    virtual GQueue               *CreateQueue();
-    virtual GRenderPass          *CreateRenderPass();
-    virtual GSampler             *CreateSampler();
-    virtual GShader              *CreateShader();
-    virtual GTexture             *CreateTexture();
-    virtual GContext             *CreateContext();
+    virtual Buffer              *CreateBuffer();
+    virtual CommandBuffer       *CreateCommandBuffer();
+    virtual DescriptorSet       *CreateDescriptorSet();
+    virtual DescriptorSetLayout *CreateDescriptorSetLayout();
+    virtual Fence               *CreateFence();
+    virtual Framebuffer         *CreateFramebuffer();
+    virtual InputAssembler      *CreateInputAssembler();
+    virtual PipelineLayout     *CreatePipelineLayout();
+    virtual Queue               *CreateQueue();
+    virtual RenderPass          *CreateRenderPass();
+    virtual Sampler             *CreateSampler();
+    virtual ShaderStage         *CreateShader(ShaderStageInfo shaderInfo);
+    virtual Image               *CreateTexture();
+    virtual Context             *CreateContext();
 
     VulkanFactory(platform::NativeWindow window);
 
@@ -35,11 +36,27 @@ public:
     virtual bool Finalize();
     virtual void Tick(float deltaTime);
 
-    VulkanInstance        *m_pVInstance;
-    VulkanDevice          *m_pDevice;
-    VulkanSwapChain       *m_pVulkanSwapChain;
+    virtual void prepareFrame();
+    virtual void beginCommand();
+    virtual void endCommand();
+    virtual void submitFrame();
+
+    InstanceVk            *m_pVInstance;
+    DeviceVk              *m_pDevice;
+    SwapChainVk           *m_pVulkanSwapChain;
     platform::NativeWindow nativeWindow;
     VkSurfaceKHR           m_surfaceKHR;
+
+    VkCommandPool                m_commandPool;
+    std::vector<VkCommandBuffer> m_commandBuffers;
+
+    std::vector<VkFramebuffer> swapChainFramebuffers;
+    RenderPassVk              *renderPass;
+
+private:
+    void createFramebuffers();
+    void createCommandPool();
+    void createCommandBuffers();
 };
 
 FLYENGINE_END_NAMESPACE

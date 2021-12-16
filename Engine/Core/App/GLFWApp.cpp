@@ -118,15 +118,19 @@ bool GLFWApp::Finalize()
 void GLFWApp::Tick(float deltaTime)
 {
     glfwPollEvents();
-
-    for (auto module : m_runtimeModules)
-        if (module)
-            module->Tick(deltaTime);
-
     int w, h;
     glfwGetWindowSize(m_pWindow, &w, &h);
     if (w > 0 && h > 0)
+    {
+        m_pGraphicsFactory->prepareFrame();
+        m_pGraphicsFactory->beginCommand();
+        for (auto module : m_runtimeModules)
+            if (module)
+                module->Tick(deltaTime);
         m_pGraphicsFactory->Tick(deltaTime);
+        m_pGraphicsFactory->endCommand();
+        m_pGraphicsFactory->submitFrame();
+    }
 }
 
 bool GLFWApp::IsQuit()

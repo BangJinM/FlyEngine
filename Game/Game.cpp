@@ -16,7 +16,6 @@ bool Game::Finalize()
 
 void Game::Tick(float deltaTime)
 {
-    printf("ajlfajsld : %f", deltaTime);
 }
 
 FLYENGINE_END_NAMESPACE

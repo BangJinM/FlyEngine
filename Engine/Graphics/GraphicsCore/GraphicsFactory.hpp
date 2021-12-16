@@ -3,41 +3,48 @@
 
 #include "Interface/IRuntimeModule.h"
 
-#include "GBuffer.hpp"
-#include "GCommandBuffer.hpp"
-#include "GContext.hpp"
-#include "GDescriptorSet.hpp"
-#include "GDescriptorSetLayout.hpp"
-#include "GDevice.hpp"
-#include "GFence.hpp"
-#include "GFramebuffer.hpp"
-#include "GInputAssembler.hpp"
-#include "GPipelineLayout.hpp"
-#include "GQueue.hpp"
-#include "GRenderPass.hpp"
-#include "GSampler.hpp"
-#include "GShader.hpp"
-#include "GTexture.hpp"
+#include "GraphicsDefine.hpp"
 
 FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
+
+class Buffer;
+class CommandBuffer;
+class Context;
+class DescriptorSet;
+class DescriptorSetLayout;
+class Device;
+class Fence;
+class Framebuffer;
+class InputAssembler;
+class PipelineLayout;
+class Queue;
+class RenderPass;
+class Sampler;
+class ShaderStage;
+class Image;
 
 class GraphicsFactory : public Core::IRuntimeModule
 {
 public:
-    virtual GBuffer              *CreateBuffer()              = 0;
-    virtual GCommandBuffer       *CreateCommandBuffer()       = 0;
-    virtual GDescriptorSet       *CreateDescriptorSet()       = 0;
-    virtual GDescriptorSetLayout *CreateDescriptorSetLayout() = 0;
-    virtual GFence               *CreateFence()               = 0;
-    virtual GFramebuffer         *CreateFramebuffer()         = 0;
-    virtual GInputAssembler      *CreateInputAssembler()      = 0;
-    virtual GPipelineLayout      *CreatePipelineLayout()      = 0;
-    virtual GQueue               *CreateQueue()               = 0;
-    virtual GRenderPass          *CreateRenderPass()          = 0;
-    virtual GSampler             *CreateSampler()             = 0;
-    virtual GShader              *CreateShader()              = 0;
-    virtual GTexture             *CreateTexture()             = 0;
-    virtual GContext             *CreateContext()             = 0;
+    virtual Buffer              *CreateBuffer()                           = 0;
+    virtual CommandBuffer       *CreateCommandBuffer()                    = 0;
+    virtual DescriptorSet       *CreateDescriptorSet()                    = 0;
+    virtual DescriptorSetLayout *CreateDescriptorSetLayout()              = 0;
+    virtual Fence               *CreateFence()                            = 0;
+    virtual Framebuffer         *CreateFramebuffer()                      = 0;
+    virtual InputAssembler      *CreateInputAssembler()                   = 0;
+    virtual PipelineLayout     *CreatePipelineLayout()                   = 0;
+    virtual Queue               *CreateQueue()                            = 0;
+    virtual RenderPass          *CreateRenderPass()                       = 0;
+    virtual Sampler             *CreateSampler()                          = 0;
+    virtual ShaderStage         *CreateShader(ShaderStageInfo shaderInfo) = 0;
+    virtual Image               *CreateTexture()                          = 0;
+    virtual Context             *CreateContext()                          = 0;
+
+    virtual void prepareFrame() = 0;
+    virtual void beginCommand() = 0;
+    virtual void endCommand()   = 0;
+    virtual void submitFrame()  = 0;
 };
 
 FLYENGINE_END_NAMESPACE
