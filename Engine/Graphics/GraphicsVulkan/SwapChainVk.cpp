@@ -1,9 +1,10 @@
 #include "SwapChainVk.hpp"
 
-#include "VulkanDefines.hpp"
 #include "DeviceVk.hpp"
-#include "VulkanFactory.hpp"
 #include "InstanceVk.hpp"
+#include "VulkanDefines.hpp"
+#include "VulkanFactory.hpp"
+#include "VulkanFunc.hpp"
 
 #include <assert.h>
 #include <algorithm>
@@ -96,10 +97,7 @@ void SwapChainVk::CreateSwapChain()
     createInfo.presentMode    = presentMode;
     createInfo.clipped        = VK_TRUE;
 
-    if (vkCreateSwapchainKHR(m_pVulkanDevice->m_device, &createInfo, nullptr, &swapChain) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create swap chain!");
-    }
+    CheckVk(vkCreateSwapchainKHR(m_pVulkanDevice->m_device, &createInfo, nullptr, &swapChain));
 
     swapChainImageFormat = surfaceFormat.format;
 }
@@ -107,9 +105,9 @@ void SwapChainVk::CreateSwapChain()
 void SwapChainVk::CreateImageViews()
 {
     VkResult err;
-    vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, nullptr);
+    CheckVk(vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, nullptr));
     std::vector<VkImage> images(m_imageCount);
-    vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, images.data());
+    CheckVk(vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, images.data()));
 
     m_entries.resize(m_imageCount);
 
@@ -135,22 +133,18 @@ void SwapChainVk::CreateImageViews()
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount     = 1;
 
-        err = vkCreateImageView(m_pVulkanDevice->m_device, &createInfo, nullptr, &entry.imageView);
-        assert(!err);
+        err = CheckVk(vkCreateImageView(m_pVulkanDevice->m_device, &createInfo, nullptr, &entry.imageView));
 
         VkSemaphoreCreateInfo semCreateInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
 
-        err = vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.readSemaphore);
-        assert(!err);
+        err = CheckVk(vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
 
-        err = vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore);
-        assert(!err);
+        err = CheckVk(vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
 
         VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
         fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        err = vkCreateFence(m_pVulkanDevice->m_device, &fenceCreateInfo, nullptr, &entry.fence);
-        assert(!err);
+        err = CheckVk(vkCreateFence(m_pVulkanDevice->m_device, &fenceCreateInfo, nullptr, &entry.fence));
     }
 }
 
@@ -159,7 +153,7 @@ bool SwapChainVk::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
     VkDevice    device    = m_pVulkanDevice->m_device;
     VkSemaphore semaphore = argSemaphore ? argSemaphore : getActiveReadSemaphore();
     VkResult    result;
-    result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage);
+    result = CheckVk(vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage));
 
     if (result == VK_SUCCESS)
     {
@@ -193,7 +187,7 @@ VkResult SwapChainVk::QueuePresent(VkQueue &presentQueue)
 
     m_currentSemaphore++;
 
-    return vkQueuePresentKHR(presentQueue, &presentInfo);
+    return CheckVk(vkQueuePresentKHR(presentQueue, &presentInfo));
 }
 
 VkSurfaceFormatKHR SwapChainVk::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
@@ -225,17 +219,13 @@ VkPresentModeKHR SwapChainVk::ChooseSwapPresentMode(const std::vector<VkPresentM
 VkExtent2D SwapChainVk::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
 {
     VkExtent2D extent = {};
-    // width and height are either both 0xFFFFFFFF, or both not 0xFFFFFFFF.
     if (capabilities.currentExtent.width == 0xFFFFFFFF && swapChainExtent.width != 0 && swapChainExtent.height != 0)
     {
-        // If the surface size is undefined, the size is set to
-        // the size of the images requested.
         extent.width  = GRAPHICS_min(GRAPHICS_max(swapChainExtent.width, capabilities.minImageExtent.width), capabilities.maxImageExtent.width);
         extent.height = GRAPHICS_min(GRAPHICS_max(swapChainExtent.height, capabilities.minImageExtent.height), capabilities.maxImageExtent.height);
     }
     else
     {
-        // If the surface size is defined, the swap chain size must match
         extent = capabilities.currentExtent;
     }
     swapChainExtent.width  = GRAPHICS_max(extent.width, 1u);

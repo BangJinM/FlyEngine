@@ -1,3 +1,15 @@
-add_subdirectory(Core)
-add_subdirectory(Graphics)
-add_subdirectory(Platforms)
+include(App/CmakeLists.txt)
+include(Platforms/CmakeLists.txt)
+include(Common/CmakeLists.txt)
+include(Log/CmakeLists.txt)
+include(Memory/CmakeLists.txt)
+include(File/CmakeLists.txt)
+
+add_library(fly_engine 
+    ${ENGINE_APP_FILES} 
+    ${ENGINE_COMMON_FILES} 
+    ${ENGINE_PLATFORMS_FILES} 
+    ${ENGINE_LOG_FILES} 
+    ${ENGINE_MEMORY_FILES}
+    ${ENGINE_FILE_FILES}
+) 

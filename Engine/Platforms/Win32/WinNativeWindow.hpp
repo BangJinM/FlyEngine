@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/PlatformDefine.hpp"
+#include "Common/BaseDefines.hpp"
 
-FLYENGINE_PLATFORM_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 struct WinNativeWindow
 {

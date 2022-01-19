@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Interface/IRuntimeModule.h"
+#include "IRuntimeModule.h"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 class IGameLogic : public IRuntimeModule
 {

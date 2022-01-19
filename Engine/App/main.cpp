@@ -4,29 +4,30 @@
 #include <stdexcept>
 
 #include "Common/BaseDefines.hpp"
-#include "Interface/IApplication.h"
+#include "Common/IApplication.h"
+// #include "File/Files.hpp"
+#include "Log/Log.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
-
+FLYENGINE_BEGIN_NAMESPACE
 extern IApplication *g_pApplication;
-
 FLYENGINE_END_NAMESPACE
 
-USING_FLYENGINE_NAMESPACE(Core)
+USING_FLYENGINE_NAMESPACE
 
-int main()
+int main(int argc, char const *argv[])
 {
+    Log::OpenLog("Logs/error.txt");
+    if (argc <= 0) return -1;
+    // Files *files = new Files(argv[0]);
     if (g_pApplication)
     {
         std::chrono::high_resolution_clock::time_point m_LastUpdate = std::chrono::high_resolution_clock::now();
         try
         {
-            if (!g_pApplication->CreateEngineWindow("Vulkan", 1280, 640))
-                return -1;
-            if (!g_pApplication->Initialize())
-                return -1;
-            if (!g_pApplication->InitEngine(1))
-                return -1;
+            Log::Info("dafasdfa", "fjalsfjlasd");
+            if (!g_pApplication->CreateEngineWindow("Vulkan", 1280, 640)) return -1;
+            if (!g_pApplication->Initialize()) return -1;
+            if (!g_pApplication->InitEngine(1)) return -1;
 
             while (!g_pApplication->IsQuit())
             {
@@ -43,5 +44,7 @@ int main()
             return EXIT_FAILURE;
         }
     }
+    Log::CloseLog();
     return 0;
 }
+

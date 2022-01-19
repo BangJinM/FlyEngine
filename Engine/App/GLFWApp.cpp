@@ -1,20 +1,20 @@
 #include "GLFWApp.hpp"
 
-#include "Interface/IApplication.h"
-#include "Interface/IGameLogic.hpp"
-#include "Interface/IRuntimeModule.h"
+#include "Common/IApplication.h"
+#include "Common/IGameLogic.hpp"
+#include "Common/IRuntimeModule.h"
 
-#include "GraphicsVulkan/VulkanFactory.hpp"
+// #include "GraphicsVulkan/VulkanFactory.hpp"
 #include "Platforms/NativeWindow.hpp"
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "GLFW/glfw3native.h"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
-extern IApplication   *g_pApplication;
-extern IGameLogic     *g_pGameLogic;
-extern IRuntimeModule *g_pMemoryManager;
+extern IApplication *g_pApplication;
+extern IGameLogic *  g_pGameLogic;
+// extern IRuntimeModule *g_pMemoryManager;
 
 void GLFWApp::resizeCallback(GLFWwindow *wnd, int w, int h)
 {
@@ -44,8 +44,7 @@ void GLFWApp::mouseWheelCallback(GLFWwindow *wnd, double dx, double dy) {}
 
 bool GLFWApp::CreateEngineWindow(const char *Title, int Width, int Height, int GlfwApiHint)
 {
-    if (glfwInit() != GLFW_TRUE)
-        return false;
+    if (glfwInit() != GLFW_TRUE) return false;
 
     glfwWindowHint(GLFW_CLIENT_API, GlfwApiHint);
     if (GlfwApiHint == GLFW_OPENGL_API)
@@ -72,28 +71,23 @@ bool GLFWApp::CreateEngineWindow(const char *Title, int Width, int Height, int G
     return true;
 }
 
-bool GLFWApp::InitEngine(int DevType)
-{
-    return 1;
-}
+bool GLFWApp::InitEngine(int DevType) { return 1; }
 
 bool GLFWApp::Initialize()
 {
-    m_runtimeModules = {g_pGameLogic, g_pMemoryManager};
+    m_runtimeModules = {g_pGameLogic};
     for (auto module : m_runtimeModules)
     {
         bool flag = true;
-        if (module)
-            flag = module->Initialize();
-        if (!flag)
-            return false;
+        if (module) flag = module->Initialize();
+        if (!flag) return false;
     }
-    // Init Native Window
-    platform::NativeWindow nativeWindow(glfwGetWin32Window(m_pWindow));
+    // // Init Native Window
+    // platform::NativeWindow nativeWindow(glfwGetWin32Window(m_pWindow));
 
-    // Init Graphics Engine
-    m_pGraphicsFactory = new Graphics::VulkanFactory(nativeWindow);
-    m_pGraphicsFactory->Initialize();
+    // // Init Graphics Engine
+    // m_pGraphicsFactory = new Graphics::VulkanFactory(nativeWindow);
+    // m_pGraphicsFactory->Initialize();
 
     return true;
 }
@@ -101,11 +95,9 @@ bool GLFWApp::Initialize()
 bool GLFWApp::Finalize()
 {
     for (auto module : m_runtimeModules)
-        if (module)
-            module->Finalize();
+        if (module) module->Finalize();
 
-    if (m_pGraphicsFactory)
-        m_pGraphicsFactory->Finalize();
+    // if (m_pGraphicsFactory) m_pGraphicsFactory->Finalize();
 
     if (m_pWindow)
     {
@@ -122,20 +114,16 @@ void GLFWApp::Tick(float deltaTime)
     glfwGetWindowSize(m_pWindow, &w, &h);
     if (w > 0 && h > 0)
     {
-        m_pGraphicsFactory->prepareFrame();
-        m_pGraphicsFactory->beginCommand();
+        // m_pGraphicsFactory->prepareFrame();
+        // m_pGraphicsFactory->beginCommand();
         for (auto module : m_runtimeModules)
-            if (module)
-                module->Tick(deltaTime);
-        m_pGraphicsFactory->Tick(deltaTime);
-        m_pGraphicsFactory->endCommand();
-        m_pGraphicsFactory->submitFrame();
+            if (module) module->Tick(deltaTime);
+        // m_pGraphicsFactory->Tick(deltaTime);
+        // m_pGraphicsFactory->endCommand();
+        // m_pGraphicsFactory->submitFrame();
     }
 }
 
-bool GLFWApp::IsQuit()
-{
-    return glfwWindowShouldClose(m_pWindow);
-}
+bool GLFWApp::IsQuit() { return glfwWindowShouldClose(m_pWindow); }
 
 FLYENGINE_END_NAMESPACE

@@ -11,7 +11,7 @@ set(GRAPHICS_VULKAN_FILES
 )
 
 link_libraries( 
-    ${Vulkan_LIBRARIES} platform_lib
+    ${Vulkan_LIBRARIES}
 )
 include_directories ( 
     PUBLIC ${Vulkan_INCLUDE_DIRS}

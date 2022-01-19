@@ -2,13 +2,11 @@
 #pragma once
 
 #include "Common/BaseDefines.hpp"
+#include "Common/IGameLogic.hpp"
 #include "Game.hpp"
-#include "Interface/IGameLogic.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
-USING_FLYENGINE_NAMESPACE(FlyGame)
-
-IGameLogic *g_pGameLogic = static_cast<IGameLogic *>(new Game);
+IGameLogic *g_pGameLogic = static_cast<IGameLogic *>(new game::Game);
 
 FLYENGINE_END_NAMESPACE

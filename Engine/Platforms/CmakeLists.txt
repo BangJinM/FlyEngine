@@ -1,10 +1,8 @@
+include(Platforms/Core/CmakeLists.txt)
+include(Platforms/Win32/CmakeLists.txt)
 
-
-include(Core/CmakeLists.txt)
-include(Win32/CmakeLists.txt)
-
-set(PLATFORMS_FILES 
-    NativeWindow.hpp
+set(ENGINE_PLATFORMS_FILES 
+    Platforms/NativeWindow.hpp
+    ${ENGINE_PLATFORM_CORE_FILES} 
+    ${ENGINE_PLATFORM_WIN32_FILES} 
 )
-
-add_library(platform_lib ${PLATFORM_CORE_FILES} ${PLATFORM_WIN32_FILES} ${PLATFORMS_FILES})

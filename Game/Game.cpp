@@ -2,20 +2,11 @@
 
 #include <iostream>
 
-FLYENGINE_BEGIN_NAMESPACE(FlyGame)
-
-bool Game::Initialize()
+namespace game
 {
-    return true;
-}
+bool Game::Initialize() { return true; }
 
-bool Game::Finalize()
-{
-    return true;
-}
+bool Game::Finalize() { return true; }
 
-void Game::Tick(float deltaTime)
-{
-}
-
-FLYENGINE_END_NAMESPACE
+void Game::Tick(float deltaTime) {}
+}  // namespace game

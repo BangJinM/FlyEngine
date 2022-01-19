@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Common/BaseDefines.hpp"
+#include "BaseDefines.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 class NonCopyable
 {

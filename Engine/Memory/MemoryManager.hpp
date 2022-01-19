@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "Allocator.hpp"
 #include "Common/BaseDefines.hpp"
-#include "Interface/IRuntimeModule.h"
+#include "Common/IRuntimeModule.h"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 class MemoryManager : public IRuntimeModule
 {

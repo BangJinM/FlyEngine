@@ -3,11 +3,12 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
-#include "GraphicsCore/GraphicsFactory.hpp"
-#include "Interface/IApplication.h"
-#include "Interface/IRuntimeModule.h"
+// #include "GraphicsCore/GraphicsFactory.hpp"
+#include "Common/BaseDefines.hpp"
+#include "Common/IApplication.h"
+#include "Common/IRuntimeModule.h"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 class GLFWApp : public IApplication
 {
@@ -30,6 +31,6 @@ public:
 public:
     GLFWwindow                   *m_pWindow = nullptr;
     std::vector<IRuntimeModule *> m_runtimeModules;
-    Graphics::GraphicsFactory    *m_pGraphicsFactory;
+    // Graphics::GraphicsFactory    *m_pGraphicsFactory;
 };
 FLYENGINE_END_NAMESPACE

@@ -6,6 +6,7 @@
 #include "InstanceVk.hpp"
 #include "VulkanDefines.hpp"
 #include "VulkanFactory.hpp"
+#include "VulkanFunc.hpp"
 
 FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
 
@@ -45,10 +46,7 @@ void RenderPassVk::Initialize()
     renderPassInfo.subpassCount    = 1;
     renderPassInfo.pSubpasses      = &subpass;
 
-    if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create render pass!");
-    }
+    CheckVk(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass));
 }
 void RenderPassVk::Finalize()
 {

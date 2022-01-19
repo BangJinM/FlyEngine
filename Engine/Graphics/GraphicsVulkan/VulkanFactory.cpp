@@ -19,6 +19,7 @@
 #include "SamplerVk.hpp"
 #include "ShaderStageVk.hpp"
 #include "SwapChainVk.hpp"
+#include "VulkanFunc.hpp"
 
 #include "Platforms/NativeWindow.hpp"
 
@@ -120,65 +121,7 @@ bool VulkanFactory::Initialize()
     m_pVInstance = new InstanceVk();
     m_pVInstance->Initialize();
 
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-    VkAndroidSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR};
-    surfaceCreateInfo.window = (ANativeWindow *)_windowHandle;
-    VK_CHECK(vkCreateAndroidSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
-
-    EventDispatcher::addCustomEventListener(EVENT_DESTROY_WINDOW, [=](const CustomEvent &) -> void {
-        if (_gpuContext && _gpuContext->vkSurface != VK_NULL_HANDLE)
-        {
-
-            CCVKQueue *queue = (CCVKQueue *)device->getQueue();
-
-            uint fenceCount = device->gpuFencePool()->size();
-            if (fenceCount)
-            {
-                VK_CHECK(vkWaitForFences(device->gpuDevice()->vkDevice, fenceCount, device->gpuFencePool()->data(), VK_TRUE, DEFAULT_TIMEOUT));
-            }
-
-            device->destroySwapchain();
-            device->_swapchainReady = false;
-
-            vkDestroySurfaceKHR(_gpuContext->vkInstance, _gpuContext->vkSurface, nullptr);
-            _gpuContext->vkSurface = VK_NULL_HANDLE;
-        }
-    });
-
-    EventDispatcher::addCustomEventListener(EVENT_RECREATE_WINDOW, [=](const CustomEvent &event) -> void {
-        _windowHandle = (uintptr_t)event.args->ptrVal;
-
-        if (_gpuContext && _gpuContext->vkSurface == VK_NULL_HANDLE)
-        {
-            VkAndroidSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR};
-            surfaceCreateInfo.window = (ANativeWindow *)_windowHandle;
-            VK_CHECK(vkCreateAndroidSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
-
-            device->checkSwapchainStatus();
-        }
-    });
-#elif defined(VK_USE_PLATFORM_WIN32_KHR)
-    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR};
-    surfaceCreateInfo.hinstance = (HINSTANCE)GetModuleHandle(0);
-    surfaceCreateInfo.hwnd      = (HWND)nativeWindow.hWnd;
-    vkCreateWin32SurfaceKHR(m_pVInstance->GetVkInstance(), &surfaceCreateInfo, nullptr, &m_surfaceKHR);
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
-    VkMetalSurfaceCreateInfoEXT surfaceCreateInfo{VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT};
-    surfaceCreateInfo.pLayer = (CAMetalLayer *)_windowHandle;
-    VK_CHECK(vkCreateMetalSurfaceEXT(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    VkWaylandSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR};
-    surfaceCreateInfo.display = nullptr;  // TODO
-    surfaceCreateInfo.surface = (wl_surface *)_windowHandle;
-    VK_CHECK(vkCreateWaylandSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-    VkXcbSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR};
-    surfaceCreateInfo.connection = nullptr;  // TODO
-    surfaceCreateInfo.window     = (xcb_window_t)_windowHandle;
-    VK_CHECK(vkCreateXcbSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
-#else
-#    pragma error Platform not supported
-#endif
+    this->CreateSurface();
 
     m_pDevice = new DeviceVk(this);
     m_pDevice->Initialize();
@@ -221,10 +164,7 @@ void VulkanFactory::createFramebuffers()
         framebufferInfo.height          = swapChainExtent.height;
         framebufferInfo.layers          = 1;
 
-        if (vkCreateFramebuffer(m_pDevice->GetLogicalDevice(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to create framebuffer!");
-        }
+        CheckVk(vkCreateFramebuffer(m_pDevice->GetLogicalDevice(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]));
     }
 }
 
@@ -236,10 +176,7 @@ void VulkanFactory::createCommandPool()
     poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
-    if (vkCreateCommandPool(m_pDevice->GetLogicalDevice(), &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create command pool!");
-    }
+    CheckVk(vkCreateCommandPool(m_pDevice->GetLogicalDevice(), &poolInfo, nullptr, &m_commandPool));
 }
 
 void VulkanFactory::createCommandBuffers()
@@ -254,10 +191,70 @@ void VulkanFactory::createCommandBuffers()
     allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
 
-    if (vkAllocateCommandBuffers(m_pDevice->GetLogicalDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to allocate command buffers!");
-    }
+    CheckVk(vkAllocateCommandBuffers(m_pDevice->GetLogicalDevice(), &allocInfo, m_commandBuffers.data()));
+}
+
+void VulkanFactory::CreateSurface()
+{
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    VkAndroidSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR};
+    surfaceCreateInfo.window = (ANativeWindow *)_windowHandle;
+    VK_CHECK(vkCreateAndroidSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
+
+    EventDispatcher::addCustomEventListener(EVENT_DESTROY_WINDOW, [=](const CustomEvent &) -> void {
+        if (_gpuContext && _gpuContext->vkSurface != VK_NULL_HANDLE)
+        {
+
+            CCVKQueue *queue = (CCVKQueue *)device->getQueue();
+
+            uint fenceCount = device->gpuFencePool()->size();
+            if (fenceCount)
+            {
+                VK_CHECK(vkWaitForFences(device->gpuDevice()->vkDevice, fenceCount, device->gpuFencePool()->data(), VK_TRUE, DEFAULT_TIMEOUT));
+            }
+
+            device->destroySwapchain();
+            device->_swapchainReady = false;
+
+            vkDestroySurfaceKHR(_gpuContext->vkInstance, _gpuContext->vkSurface, nullptr);
+            _gpuContext->vkSurface = VK_NULL_HANDLE;
+        }
+    });
+
+    EventDispatcher::addCustomEventListener(EVENT_RECREATE_WINDOW, [=](const CustomEvent &event) -> void {
+        _windowHandle = (uintptr_t)event.args->ptrVal;
+
+        if (_gpuContext && _gpuContext->vkSurface == VK_NULL_HANDLE)
+        {
+            VkAndroidSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR};
+            surfaceCreateInfo.window = (ANativeWindow *)_windowHandle;
+            VK_CHECK(vkCreateAndroidSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
+
+            device->checkSwapchainStatus();
+        }
+    });
+#elif defined(VK_USE_PLATFORM_WIN32_KHR)
+    VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR};
+    surfaceCreateInfo.hinstance = (HINSTANCE)GetModuleHandle(0);
+    surfaceCreateInfo.hwnd      = (HWND)nativeWindow.hWnd;
+    CheckVk(vkCreateWin32SurfaceKHR(m_pVInstance->GetVkInstance(), &surfaceCreateInfo, nullptr, &m_surfaceKHR));
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
+    VkMetalSurfaceCreateInfoEXT surfaceCreateInfo{VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT};
+    surfaceCreateInfo.pLayer = (CAMetalLayer *)_windowHandle;
+    VK_CHECK(vkCreateMetalSurfaceEXT(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
+#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    VkWaylandSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR};
+    surfaceCreateInfo.display = nullptr;  // TODO
+    surfaceCreateInfo.surface = (wl_surface *)_windowHandle;
+    VK_CHECK(vkCreateWaylandSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
+#elif defined(VK_USE_PLATFORM_XCB_KHR)
+    VkXcbSurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR};
+    surfaceCreateInfo.connection = nullptr;  // TODO
+    surfaceCreateInfo.window     = (xcb_window_t)_windowHandle;
+    VK_CHECK(vkCreateXcbSurfaceKHR(_gpuContext->vkInstance, &surfaceCreateInfo, nullptr, &_gpuContext->vkSurface));
+#else
+#    pragma error Platform not supported
+#endif
 }
 
 void VulkanFactory::prepareFrame()
@@ -271,7 +268,7 @@ void VulkanFactory::prepareFrame()
     VkResult result{VK_SUCCESS};
     do
     {
-        result = vkWaitForFences(m_pDevice->GetLogicalDevice(), 1, &fence, VK_TRUE, UINT64_MAX);
+        result = CheckVk(vkWaitForFences(m_pDevice->GetLogicalDevice(), 1, &fence, VK_TRUE, UINT64_MAX));
     } while (result == VK_TIMEOUT);
     if (result != VK_SUCCESS)
     {  // This allows Aftermath to do things and later assert below
@@ -291,14 +288,14 @@ void VulkanFactory::beginCommand()
 
     VkCommandBufferBeginInfo beginInfo{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    vkBeginCommandBuffer(cmdBuf, &beginInfo);
+    CheckVk(vkBeginCommandBuffer(cmdBuf, &beginInfo));
 }
 void VulkanFactory::endCommand()
 {
     uint32_t imageIndex = m_pVulkanSwapChain->getActiveImageIndex();
     auto     cmdBuf     = m_commandBuffers[imageIndex];
     // Submit for display
-    vkEndCommandBuffer(cmdBuf);
+    CheckVk(vkEndCommandBuffer(cmdBuf));
 }
 
 void VulkanFactory::submitFrame()
@@ -306,7 +303,7 @@ void VulkanFactory::submitFrame()
     uint32_t imageIndex = m_pVulkanSwapChain->getActiveImageIndex();
 
     VkFence fence = m_pVulkanSwapChain->GetFence();
-    vkResetFences(m_pDevice->GetLogicalDevice(), 1, &fence);
+    CheckVk(vkResetFences(m_pDevice->GetLogicalDevice(), 1, &fence));
 
     // In case of using NVLINK
     bool                          m_useNvlink = false;
@@ -338,7 +335,7 @@ void VulkanFactory::submitFrame()
     submitInfo.pNext                = &deviceGroupSubmitInfo;
 
     // Submit to the graphics queue passing a wait fence
-    vkQueueSubmit(m_pDevice->m_graphicsQueue, 1, &submitInfo, fence);
+   CheckVk( vkQueueSubmit(m_pDevice->m_graphicsQueue, 1, &submitInfo, fence));
 
     // Presenting frame
     m_pVulkanSwapChain->QueuePresent(m_pDevice->m_presentQueue);

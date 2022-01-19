@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Common/BaseDefines.hpp"
-#include "Common/NonCopyable.hpp"
+#include "BaseDefines.hpp"
+#include "NonCopyable.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 template <class T>
 class Singleton : NonCopyable
@@ -14,8 +14,7 @@ protected:
 public:
     inline static T GetInstance()
     {
-        if (singleton)
-            return singleton;
+        if (singleton) return singleton;
         singleton = new T();
     }
 };

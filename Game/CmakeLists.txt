@@ -13,5 +13,5 @@ set(ALL_FILES
 add_executable(MyGame ${ALL_FILES})
 
 target_link_libraries(MyGame PRIVATE 
-fly_engine_core_lib
+fly_engine
 ) 

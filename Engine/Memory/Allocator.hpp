@@ -5,7 +5,7 @@
 
 #include "Common/BaseDefines.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 struct BlockHeader
 {
     // union-ed with data

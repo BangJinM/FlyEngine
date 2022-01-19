@@ -6,7 +6,7 @@
 #include "Common/BaseDefines.hpp"
 #include "Memory/MemoryManager.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 extern IRuntimeModule *g_pMemoryManager;
 

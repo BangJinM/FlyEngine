@@ -7,7 +7,7 @@ extern "C" void  free(void *p);
 
 #include "MemoryDefine.hpp"
 
-FLYENGINE_CORE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 static const uint32_t kBlockSizes[] = {
     // 4-increments
     4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96,

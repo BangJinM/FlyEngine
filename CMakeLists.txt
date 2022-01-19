@@ -3,12 +3,7 @@ set (CMAKE_C_STANDARD 17)
 set (CMAKE_CXX_STANDARD 17)
 
 
-if(WINDOWS)
-    set(VCPKG_TARGET_TRIPLET x86-windows)
-    message(STATUS "VCPKG_TARGET_TRIPLET：x86-windows")
-else()
-    set(VCPKG_TARGET_TRIPLET x86-windows)
-endif()
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
 
 if(NOT DEFINED ENV{VCPKG_ROOT})
     message(ERROR "没有找到环境变量:VCPKG_ROOT")

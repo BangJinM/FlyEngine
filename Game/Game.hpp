@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Common/BaseDefines.hpp"
-#include "Interface/IGameLogic.hpp"
+#include "Common/IGameLogic.hpp"
 
-FLYENGINE_BEGIN_NAMESPACE(FlyGame)
+USING_FLYENGINE_NAMESPACE
 
-USING_FLYENGINE_NAMESPACE(Core)
+namespace game
+{
 
 class Game : public IGameLogic
 {
@@ -19,4 +20,4 @@ public:
 
 extern IGameLogic *g_pGameLogic;
 
-FLYENGINE_END_NAMESPACE
+}  // namespace game
