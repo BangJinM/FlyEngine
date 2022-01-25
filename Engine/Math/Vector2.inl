@@ -1,4 +1,4 @@
-#include "Vector2.hpp"
+﻿#include "Vector2.hpp"
 
 namespace fly
 {
@@ -61,7 +61,7 @@ constexpr auto Vector2<T>::Length() const
 template <typename T>
 constexpr auto Vector2<T>::LengthSquare() const
 {
-    return x * x + y * y
+    return Dot(*this);
 }
 
 template <typename T>
@@ -89,28 +89,64 @@ template <typename T>
 template <typename K>
 constexpr Vector2<T> &Vector2<T>::operator+=(const Vector2<K> &other)
 {
-    return *this = Add(other);
+    *this = Add(other);
+    return *this;
 };
 
 template <typename T>
 template <typename K>
 constexpr Vector2<T> &Vector2<T>::operator-=(const Vector2<K> &other)
 {
-    return *this = Sub(other);
+    *this = Sub(other);
+    return *this;
 };
 
 template <typename T>
 template <typename K>
 constexpr Vector2<T> &Vector2<T>::operator*=(const K &other)
 {
-    return *this = Multiply(other);
+    *this = Multiply(other);
+    return *this;
 };
 
 template <typename T>
 template <typename K>
 constexpr Vector2<T> &Vector2<T>::operator/=(const K &other)
 {
-    return *this = Divide(other);
+    *this = Divide(other);
+    return *this;
 };
+
+/*************************************************************************************/
+
+template <typename K, typename J>
+constexpr auto operator+(const Vector2<K> &left, const Vector2<J> &right)
+{
+    return left.Add(right);
+}
+
+template <typename K, typename J>
+constexpr auto operator-(const Vector2<K> &left, const Vector2<J> &right)
+{
+    return left.Subtract(right);
+}
+
+template <typename K, typename J>
+constexpr auto operator*(const J &left, const Vector2<K> &right)
+{
+    return right.Multiply(left);
+}
+
+template <typename K, typename J>
+constexpr auto operator/(const Vector2<K> &left, const J &right)
+{
+    return left.Divide(right);
+}
+
+template <typename K>
+std::ostream &operator<<(std::ostream &stream, const Vector2<K> &vector)
+{
+    return stream << vector.x << ", " << vector.y;
+}
 
 };  // namespace fly

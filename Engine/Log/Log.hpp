@@ -95,7 +95,8 @@ public:
 
     static void OpenLog(const std::filesystem::path &filepath)
     {
-        if (auto parentPath = filepath.parent_path(); !parentPath.empty()) std::filesystem::create_directories(parentPath);
+        if (auto parentPath = filepath.parent_path(); !parentPath.empty())
+            std::filesystem::create_directories(parentPath);
         FileStream.open(filepath);
     }
     static void CloseLog() { FileStream.close(); }
@@ -111,14 +112,14 @@ private:
 
         if (FileStream.is_open())
         {
-            ((FileStream << std::forward<Args>(args)), ...);
+            ((FileStream << std::forward<Args>(args)), ...) << std::endl;
         }
     }
 
     template <typename... Args>
     static void Printf(Args... args)
     {
-        ((std::cout << std::forward<Args>(args)), ...);
+        ((std::cout << std::forward<Args>(args)), ...) << std::endl;
     }
 };
 FLYENGINE_END_NAMESPACE

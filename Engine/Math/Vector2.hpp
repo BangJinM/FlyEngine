@@ -1,6 +1,7 @@
-#pragma once
+﻿#pragma once
 
 #include <cstdint>
+#include <ostream>
 
 namespace fly
 {
@@ -160,9 +161,58 @@ public:
     static const Vector2 One;
 };
 
+/**
+ * @brief 加法
+ *
+ * @tparam K
+ * @tparam J
+ * @param vector
+ * @return Vector2
+ */
+template <typename K, typename J>
+constexpr auto operator+(const Vector2<K> &left, const Vector2<J> &right);
+
+/**
+ * @brief 减法
+ *
+ * @tparam K
+ * @tparam J
+ * @param vector
+ * @return Vector2
+ */
+template <typename K, typename J>
+constexpr auto operator-(const Vector2<K> &left, const Vector2<J> &right);
+
+/**
+ * @brief 乘法
+ *
+ * @tparam K
+ * @tparam J
+ * @param vector
+ * @return Vector2
+ */
+template <typename K, typename J>
+constexpr auto operator*(const J &left, const Vector2<K> &right);
+
+/**
+ * @brief 除法
+ *
+ * @tparam K
+ * @tparam J
+ * @param vector
+ * @return Vector2
+ */
+template <typename K, typename J>
+constexpr auto operator/(const Vector2<K> &left, const J &right);
+
+template <typename K>
+std::ostream &operator<<(std::ostream &stream, const Vector2<K> &vector);
+
 using Vector2f  = Vector2<float>;
 using Vector2d  = Vector2<double>;
 using Vector2i  = Vector2<int32_t>;
 using Vector2ui = Vector2<uint32_t>;
 using Vector2us = Vector2<uint16_t>;
 };  // namespace fly
+
+#include "Vector2.inl"
