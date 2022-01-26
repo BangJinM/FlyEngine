@@ -17,6 +17,22 @@ if (WITH_COVERAGE)
     set(WITH_TESTS ON)
 endif()
 
+# 设置编译执行文件的导出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR}/bin)    
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/bin) 
+
+# 设置编译库的导出目录
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR}/bin/lib)    
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/bin/lib) 
+
+# 设置库的后缀
+set(CMAKE_DEBUG_POSTFIX "_d")    
+set(CMAKE_RELEASE_POSTFIX "_r") 
+
+# 设置执行文件的后缀
+set_target_properties(${TARGET_NAME} PROPERTIES DEBUG_POSTFIX "_d")     
+set_target_properties(${TARGET_NAME} PROPERTIES RELEASE_POSTFIX "_r") 
+
 # 显示所有配置信息
 macro(print_config)
     message("")

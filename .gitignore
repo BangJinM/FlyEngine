@@ -39,4 +39,5 @@ out
 
 *.spv
 /.vs
+/bin
 /CMakeSettings.json
