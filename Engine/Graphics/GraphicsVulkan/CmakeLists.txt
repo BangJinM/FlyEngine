@@ -1,0 +1,14 @@
+file(GLOB_RECURSE H_HEADER_FILES *.h)
+file(GLOB_RECURSE HPP_HEADER_FILES *.hpp)
+file(GLOB_RECURSE SOURCE_CPP_FILES *.cpp *.cc)
+file(GLOB_RECURSE SOURCE_C_FILES *.c)
+
+set(GRAPHICS_VULKAN_FILES
+    ${H_HEADER_FILES}
+    ${HPP_HEADER_FILES}
+    ${SOURCE_CPP_FILES}
+    ${SOURCE_C_FILES}
+)
+
+find_package(Vulkan REQUIRED)
+link_libraries(Vulkan::Vulkan)

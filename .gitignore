@@ -38,3 +38,6 @@ out
 .vscode
 
 *.spv
+/.vs
+/bin
+/CMakeSettings.json

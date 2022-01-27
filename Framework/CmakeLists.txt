@@ -1,6 +1,0 @@
-add_subdirectory(Base)
-add_subdirectory(Render)
-add_subdirectory(Scene)
-add_subdirectory(Memory)
-add_subdirectory(File)
-add_subdirectory(Logger)
