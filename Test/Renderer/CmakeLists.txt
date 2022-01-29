@@ -1,0 +1,9 @@
+# 添加依赖库
+find_package(Vulkan REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+
+link_libraries(glfw Vulkan::Vulkan)
+
+# 添加可执行目标
+add_executable(test_renderer Vukan.cpp)
+add_my_test(test_renderer)
