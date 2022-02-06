@@ -13,4 +13,6 @@ set(ENGINE_FILE_FILES
 )
 
 find_package(PhysFS QUIET)
+
+include_directories(${PHYSFS_INCLUDE_DIR})
 link_libraries( ${PHYSFS_LIBRARY} )

@@ -1,12 +1,10 @@
 #pragma once
 
-#include "GraphicsCore/Base.hpp"
-#include "GraphicsCore/GraphicsDefine.hpp"
+#include "Engine.hpp"
 
-#include <vulkan/vulkan.h>
 #include <vector>
 
-FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
 class InstanceVk : public Base
 {
