@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Engine.hpp"
+#include "Common/BaseDefines.hpp"
+#include "Common/IRuntimeModule.h"
+
+#include "GraphicsCore/Shader.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
-
-class Shader;
 
 class DeviceManager : public IRuntimeModule
 {

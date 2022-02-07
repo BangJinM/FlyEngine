@@ -31,8 +31,8 @@ const bool enableValidationLayers = true;
 
 VkResult CreateDebugUtilsMessengerEXT(VkInstance                                instance,
                                       const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                      const VkAllocationCallbacks *             pAllocator,
-                                      VkDebugUtilsMessengerEXT *                pDebugMessenger)
+                                      const VkAllocationCallbacks              *pAllocator,
+                                      VkDebugUtilsMessengerEXT                 *pDebugMessenger)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr)
@@ -272,7 +272,7 @@ private:
             createInfo.pNext = nullptr;
         }
 
-        if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
+        if (fly::CheckVk(vkCreateInstance(&createInfo, nullptr, &instance)) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create instance!");
         }
@@ -1057,7 +1057,7 @@ private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                         VkDebugUtilsMessageTypeFlagsEXT             messageType,
                                                         const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                        void *                                      pUserData)
+                                                        void                                       *pUserData)
     {
         std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 

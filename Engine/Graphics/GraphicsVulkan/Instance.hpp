@@ -1,8 +1,12 @@
 #pragma once
 
-#include "Engine.hpp"
-
 #include <vector>
+
+#include <vulkan/vulkan.h>
+
+#include "Common/BaseDefines.hpp"
+
+#include "GraphicsCore/Base.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
 

@@ -1,24 +1,21 @@
 #pragma once
 
-#include "Engine.hpp"
+#include "GraphicsCore/DeviceManager.hpp"
+
+#include "GraphicsVulkan/ShaderImpl.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
 
 class DeviceManagerImpl : public DeviceManager
 {
 public:
-    Shader *CreateShader(ShaderInfo info)
-    {
-        auto shader = new ShaderImpl();
-        shader->Initialize(info);
-        return shader;
-    }
+    virtual Shader *CreateShader(ShaderInfo info);
 
-    bool Initialize() { return true; }
+    virtual bool Initialize();
 
-    bool Finalize() { return true; }
+    virtual bool Finalize();
 
-    void Tick(float deltaTime) {}
+    virtual void Tick(float deltaTime);
 };
 
 FLYENGINE_END_NAMESPACE

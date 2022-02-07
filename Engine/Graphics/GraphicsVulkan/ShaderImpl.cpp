@@ -15,7 +15,8 @@ VkShaderModule ShaderImpl::CreateShaderModule(const std::vector<char> &code)
     //     throw std::runtime_error("failed to create shader module!");
     // }
 
-    return shaderModule;
+    // return shaderModule;
+    return NULL;
 }
 
 void ShaderImpl::Initialize(ShaderInfo shaderInfo)

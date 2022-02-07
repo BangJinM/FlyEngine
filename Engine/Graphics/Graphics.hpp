@@ -3,12 +3,10 @@
 #include "GraphicsCore/Shader.hpp"
 
 #if FLY_USE_VULKAN
-#    include <vulkan/vulkan.h> 
-
 #    include "GraphicsVulkan/Device.hpp"
 #    include "GraphicsVulkan/DeviceManagerImpl.hpp"
 #    include "GraphicsVulkan/GraphicsVulkan.hpp"
 #    include "GraphicsVulkan/Instance.hpp"
-
-typedef struct DeviceManagerImpl DeviceManagerImpl;
+#    include "GraphicsVulkan/ShaderImpl.hpp"
+#    include "GraphicsVulkan/VulkanFunc.hpp"
 #endif
