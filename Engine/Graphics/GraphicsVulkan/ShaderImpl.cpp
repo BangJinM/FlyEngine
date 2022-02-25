@@ -19,10 +19,7 @@ VkShaderModule ShaderImpl::CreateShaderModule(const std::vector<char> &code)
     return NULL;
 }
 
-void ShaderImpl::Initialize(ShaderInfo shaderInfo)
-{
-    this->shaderInfo = shaderInfo;
-}
+void ShaderImpl::Initialize() {}
 void ShaderImpl::Destroy() {}
 
 FLYENGINE_END_NAMESPACE

@@ -34,8 +34,10 @@ struct ShaderInfo
 class Shader : public Base
 {
 public:
-    virtual void Initialize(ShaderInfo shaderInfo) = 0;
-    virtual void Destroy()                         = 0;
+    Shader(ShaderInfo shaderInfo) : shaderInfo(shaderInfo) {}
+
+    virtual void Initialize() = 0;
+    virtual void Destroy()    = 0;
 
 protected:
     ShaderInfo shaderInfo;

@@ -2,8 +2,8 @@
 
 #include "Common/BaseDefines.hpp"
 #include "Common/IRuntimeModule.h"
-
 #include "GraphicsCore/Shader.hpp"
+#include "Platforms/NativeWindow.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
 

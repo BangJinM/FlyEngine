@@ -45,9 +45,9 @@ VkResult CheckVk(VkResult result)
 
     std::string str = "";
 
-    str += "Vulkan ERROR ID: " + std::to_string(result) +"  INFO: " + failure;
+    str += "Vulkan ERROR ID: " + std::to_string(result) + "  INFO: " + failure;
 
-    throw std::runtime_error(str);
+    SHOWERROR(str);
     return result;
 }
 

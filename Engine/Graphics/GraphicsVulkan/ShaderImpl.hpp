@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "GraphicsCore/Shader.hpp"
 
@@ -12,7 +12,9 @@ private:
     VkShaderModule CreateShaderModule(const std::vector<char> &code);
 
 public:
-    virtual void Initialize(ShaderInfo shaderInfo);
+    ShaderImpl(ShaderInfo shaderInfo) : Shader(shaderInfo) {}
+
+    virtual void Initialize();
     virtual void Destroy();
 };
 

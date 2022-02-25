@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "Common/BaseDefines.hpp"
 
@@ -10,13 +10,15 @@
 
 FLYENGINE_BEGIN_NAMESPACE
 
-class InstanceVk : public Base
+class DeviceManagerImpl;
+
+class Instance : public Base
 {
 public:
     virtual void Initialize();
     virtual void Finalize();
 
-    virtual VkInstance &GetVkInstance() { return m_Instance; }
+    VkInstance &GetVkInstance() { return m_Instance; }
 
     void CreateInstance();
     void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
@@ -25,10 +27,9 @@ public:
 
     bool                      CheckValidationLayerSupport();
     std::vector<const char *> GetRequiredExtensions();
-
 private:
     VkInstance               m_Instance = VK_NULL_HANDLE;
     VkDebugUtilsMessengerEXT debugMessenger;
 };
-
+extern DeviceManagerImpl *p_gDeviceManager;
 FLYENGINE_END_NAMESPACE
