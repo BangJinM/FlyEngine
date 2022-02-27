@@ -153,7 +153,7 @@ QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
         }
 
         VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(device, index, m_surfaceKHR, &presentSupport);
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, index, p_gDeviceManager->surfaceKHR->surfaceKHR, &presentSupport);
 
         if (presentSupport)
         {
@@ -175,24 +175,24 @@ SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device)
 {
     SwapChainSupportDetails details;
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surfaceKHR, &details.capabilities);
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &details.capabilities);
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surfaceKHR, &formatCount, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &formatCount, nullptr);
 
     if (formatCount != 0)
     {
         details.formats.resize(formatCount);
-        vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surfaceKHR, &formatCount, details.formats.data());
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &formatCount, details.formats.data());
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surfaceKHR, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &presentModeCount, nullptr);
 
     if (presentModeCount != 0)
     {
         details.presentModes.resize(presentModeCount);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surfaceKHR, &presentModeCount, details.presentModes.data());
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &presentModeCount, details.presentModes.data());
     }
 
     return details;

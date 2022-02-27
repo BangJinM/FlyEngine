@@ -41,10 +41,13 @@ struct Entry
     VkFence fence{};
 };
 
+class DeviceManagerImpl;
+extern DeviceManagerImpl *p_gDeviceManager;
+
 class SwapChainImpl : public Base
 {
 public:
-    SwapChainImpl(DeviceManagerImpl *);
+    SwapChainImpl();
 
     void Initialize();
     void Finalize();
@@ -72,9 +75,6 @@ public:
     VkFence     GetFence() { return m_entries[m_currentImage].fence; }
 
 public:
-    DeviceManagerImpl *deviceManager;
-    Instance *       instance;
-
     uint32_t       m_currentImage{};
     VkSwapchainKHR swapChain;
     VkFormat       swapChainImageFormat;

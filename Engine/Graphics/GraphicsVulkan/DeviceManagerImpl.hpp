@@ -9,8 +9,8 @@
 FLYENGINE_BEGIN_NAMESPACE
 
 struct DebugDetails
-{
-    std::vector<const char *> validationLayers       = {"VK_LAYER_LUNARG_standard_validation"};
+{  // VK_LAYER_KHRONOS_validation or VK_LAYER_LUNARG_standard_validation
+    std::vector<const char *> validationLayers       = {"VK_LAYER_KHRONOS_validation"};
     std::vector<const char *> deviceExtensions       = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     bool                      enableValidationLayers = true;
 };
@@ -33,10 +33,10 @@ public:
     DeviceManagerImpl();
     ~DeviceManagerImpl();
 
-    Instance *   instanceImpl;
-    SurfaceKHR * surfaceKHR;
+    Instance    *instanceImpl;
+    SurfaceKHR  *surfaceKHR;
     DebugDetails debugDetails;
-    Device *     device;
+    Device      *device;
 };
 
 FLYENGINE_END_NAMESPACE

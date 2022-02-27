@@ -40,8 +40,8 @@ FLYENGINE_END_NAMESPACE
 
 VkResult CreateDebugUtilsMessengerEXT(VkInstance                                instance,
                                       const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                      const VkAllocationCallbacks *             pAllocator,
-                                      VkDebugUtilsMessengerEXT *                pDebugMessenger)
+                                      const VkAllocationCallbacks              *pAllocator,
+                                      VkDebugUtilsMessengerEXT                 *pDebugMessenger)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr)
@@ -136,9 +136,12 @@ private:
     void initVulkan()
     {
         fly::p_gDeviceManager->Initialize(fly::NativeWindow(glfwGetWin32Window(window)));
-        instance = ((fly::DeviceManagerImpl *)fly::p_gDeviceManager)->instanceImpl->GetVkInstance();
-        surface  = fly::p_gDeviceManager->surfaceKHR->surfaceKHR;
-        device   = fly::p_gDeviceManager->device->m_device;
+        instance       = ((fly::DeviceManagerImpl *)fly::p_gDeviceManager)->instanceImpl->GetVkInstance();
+        surface        = fly::p_gDeviceManager->surfaceKHR->surfaceKHR;
+        device         = fly::p_gDeviceManager->device->m_device;
+        physicalDevice = fly::p_gDeviceManager->device->m_physicalDevice;
+        graphicsQueue  = fly::p_gDeviceManager->device->m_graphicsQueue;
+        presentQueue   = fly::p_gDeviceManager->device->m_presentQueue;
         
         createSwapChain();
         createImageViews();
@@ -984,7 +987,7 @@ private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                         VkDebugUtilsMessageTypeFlagsEXT             messageType,
                                                         const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                        void *                                      pUserData)
+                                                        void                                       *pUserData)
     {
         std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 

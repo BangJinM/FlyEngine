@@ -11,7 +11,7 @@
 FLYENGINE_BEGIN_NAMESPACE
 
 class DeviceManagerImpl;
-
+extern DeviceManagerImpl *p_gDeviceManager;
 class Instance : public Base
 {
 public:
@@ -31,5 +31,5 @@ private:
     VkInstance               m_Instance = VK_NULL_HANDLE;
     VkDebugUtilsMessengerEXT debugMessenger;
 };
-extern DeviceManagerImpl *p_gDeviceManager;
+
 FLYENGINE_END_NAMESPACE

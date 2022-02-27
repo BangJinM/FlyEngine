@@ -50,7 +50,6 @@ public:
 
 public:
     VkDevice         m_device;
-    VkSurfaceKHR     m_surfaceKHR;
     VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
     VkQueue          m_graphicsQueue;
     VkQueue          m_presentQueue;

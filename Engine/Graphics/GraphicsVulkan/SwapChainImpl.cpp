@@ -1,253 +1,252 @@
-// #include "SwapChainImpl.hpp"
+#include "SwapChainImpl.hpp"
 
-// #include "DeviceManagerImpl.hpp"
-// #include "Instance.hpp"
+#include "DeviceManagerImpl.hpp"
+#include "Instance.hpp"
+#include "VulkanFunc.hpp"
 
-// #include <assert.h>
-// #include <algorithm>
-// #include <iostream>
-// #include <limits>
-// #include <set>
-// #include <string>
-// #include <vector>
+#include <assert.h>
+#include <algorithm>
+#include <iostream>
+#include <limits>
+#include <set>
+#include <string>
+#include <vector>
 
-// #define GRAPHICS_max(a, b) (((a) > (b)) ? (a) : (b))
-// #define GRAPHICS_min(a, b) (((a) < (b)) ? (a) : (b))
+#define GRAPHICS_max(a, b) (((a) > (b)) ? (a) : (b))
+#define GRAPHICS_min(a, b) (((a) < (b)) ? (a) : (b))
 
-// FLYENGINE_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
-// SwapChainImpl::SwapChainImpl(DeviceManagerImpl *deviceManager) : deviceManager(deviceManager)
-// {
-//     instance = deviceManager->instanceImpl;
+SwapChainImpl::SwapChainImpl()
+{
+    swapChainExtent.width  = 0;
+    swapChainExtent.height = 0;
+}
 
-//     swapChainExtent.width  = 0;
-//     swapChainExtent.height = 0;
-// }
+void SwapChainImpl::Initialize()
+{
+    CreateSwapChain();
+    CreateImageViews();
+}
 
-// void SwapChainImpl::Initialize()
-// {
-//     CreateSwapChain();
-//     CreateImageViews();
-// }
+void SwapChainImpl::Finalize()
+{
+    for (auto entry : m_entries)
+    {
+        vkDestroyFence(p_gDeviceManager->device->m_device, entry.fence, nullptr);
+        vkDestroyImageView(p_gDeviceManager->device->m_device, entry.imageView, nullptr);
+        vkDestroySemaphore(p_gDeviceManager->device->m_device, entry.readSemaphore, nullptr);
+        vkDestroySemaphore(p_gDeviceManager->device->m_device, entry.writtenSemaphore, nullptr);
+    }
 
-// void SwapChainImpl::Finalize()
-// {
-//     for (auto entry : m_entries)
-//     {
-//         vkDestroyFence(m_pVulkanDevice->m_device, entry.fence, nullptr);
-//         vkDestroyImageView(m_pVulkanDevice->m_device, entry.imageView, nullptr);
-//         vkDestroySemaphore(m_pVulkanDevice->m_device, entry.readSemaphore, nullptr);
-//         vkDestroySemaphore(m_pVulkanDevice->m_device, entry.writtenSemaphore, nullptr);
-//     }
+    vkDestroySwapchainKHR(p_gDeviceManager->device->m_device, swapChain, nullptr);
+    swapChain = VK_NULL_HANDLE;
 
-//     vkDestroySwapchainKHR(m_pVulkanDevice->m_device, swapChain, nullptr);
-//     swapChain = VK_NULL_HANDLE;
+    m_entries.clear();
+}
 
-//     m_entries.clear();
-// }
+void SwapChainImpl::CreateSwapChain()
+{
+    VkPhysicalDevice        device           = p_gDeviceManager->device->m_physicalDevice;
+    SwapChainSupportDetails swapChainSupport = p_gDeviceManager->device->QuerySwapChainSupport(device);
 
-// void SwapChainImpl::CreateSwapChain()
-// {
-//     VkPhysicalDevice        device           = m_pVulkanDevice->m_physicalDevice;
-//     SwapChainSupportDetails swapChainSupport = m_pVulkanDevice->QuerySwapChainSupport(device);
+    VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
+    VkPresentModeKHR   presentMode   = ChooseSwapPresentMode(swapChainSupport.presentModes);
+    VkExtent2D         extent        = ChooseSwapExtent(swapChainSupport.capabilities);
 
-//     VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
-//     VkPresentModeKHR   presentMode   = ChooseSwapPresentMode(swapChainSupport.presentModes);
-//     VkExtent2D         extent        = ChooseSwapExtent(swapChainSupport.capabilities);
+    uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+    if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
+    {
+        imageCount = swapChainSupport.capabilities.maxImageCount;
+    }
 
-//     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-//     if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
-//     {
-//         imageCount = swapChainSupport.capabilities.maxImageCount;
-//     }
+    auto surface = p_gDeviceManager->surfaceKHR->surfaceKHR;
 
-//     auto surface = m_pVulkanDevice->m_surfaceKHR;
+    VkSwapchainCreateInfoKHR createInfo{};
+    createInfo.sType   = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    createInfo.surface = surface;
 
-//     VkSwapchainCreateInfoKHR createInfo{};
-//     createInfo.sType   = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-//     createInfo.surface = surface;
+    createInfo.minImageCount    = imageCount;
+    createInfo.imageFormat      = surfaceFormat.format;
+    createInfo.imageColorSpace  = surfaceFormat.colorSpace;
+    createInfo.imageExtent      = extent;
+    createInfo.imageArrayLayers = 1;
+    createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-//     createInfo.minImageCount    = imageCount;
-//     createInfo.imageFormat      = surfaceFormat.format;
-//     createInfo.imageColorSpace  = surfaceFormat.colorSpace;
-//     createInfo.imageExtent      = extent;
-//     createInfo.imageArrayLayers = 1;
-//     createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    QueueFamilyIndices indices              = p_gDeviceManager->device->FindQueueFamilies(p_gDeviceManager->device->m_physicalDevice);
+    uint32_t           queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
-//     QueueFamilyIndices indices              = m_pVulkanDevice->FindQueueFamilies(m_pVulkanDevice->m_physicalDevice);
-//     uint32_t           queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+    if (indices.graphicsFamily != indices.presentFamily)
+    {
+        createInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
+        createInfo.queueFamilyIndexCount = 2;
+        createInfo.pQueueFamilyIndices   = queueFamilyIndices;
+    }
+    else
+    {
+        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    }
 
-//     if (indices.graphicsFamily != indices.presentFamily)
-//     {
-//         createInfo.imageSharingMode      = VK_SHARING_MODE_CONCURRENT;
-//         createInfo.queueFamilyIndexCount = 2;
-//         createInfo.pQueueFamilyIndices   = queueFamilyIndices;
-//     }
-//     else
-//     {
-//         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-//     }
+    createInfo.preTransform   = swapChainSupport.capabilities.currentTransform;
+    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    createInfo.presentMode    = presentMode;
+    createInfo.clipped        = VK_TRUE;
 
-//     createInfo.preTransform   = swapChainSupport.capabilities.currentTransform;
-//     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-//     createInfo.presentMode    = presentMode;
-//     createInfo.clipped        = VK_TRUE;
+    CheckVk(vkCreateSwapchainKHR(p_gDeviceManager->device->m_device, &createInfo, nullptr, &swapChain));
 
-//     CheckVk(vkCreateSwapchainKHR(m_pVulkanDevice->m_device, &createInfo, nullptr, &swapChain));
+    swapChainImageFormat = surfaceFormat.format;
+}
 
-//     swapChainImageFormat = surfaceFormat.format;
-// }
+void SwapChainImpl::CreateImageViews()
+{
+    VkResult err;
+    CheckVk(vkGetSwapchainImagesKHR(p_gDeviceManager->device->m_device, swapChain, &m_imageCount, nullptr));
+    std::vector<VkImage> images(m_imageCount);
+    CheckVk(vkGetSwapchainImagesKHR(p_gDeviceManager->device->m_device, swapChain, &m_imageCount, images.data()));
 
-// void SwapChainImpl::CreateImageViews()
-// {
-//     VkResult err;
-//     CheckVk(vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, nullptr));
-//     std::vector<VkImage> images(m_imageCount);
-//     CheckVk(vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, images.data()));
+    m_entries.resize(m_imageCount);
 
-//     m_entries.resize(m_imageCount);
+    for (size_t i = 0; i < m_imageCount; i++)
+    {
+        Entry &entry = m_entries[i];
+        entry.image  = images[i];
 
-//     for (size_t i = 0; i < m_imageCount; i++)
-//     {
-//         Entry &entry = m_entries[i];
-//         entry.image  = images[i];
+        VkImageViewCreateInfo createInfo{};
+        createInfo.sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        createInfo.image    = entry.image;
+        createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        createInfo.format   = swapChainImageFormat;
 
-//         VkImageViewCreateInfo createInfo{};
-//         createInfo.sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-//         createInfo.image    = entry.image;
-//         createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-//         createInfo.format   = swapChainImageFormat;
+        createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
 
-//         createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-//         createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-//         createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-//         createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+        createInfo.subresourceRange.baseMipLevel   = 0;
+        createInfo.subresourceRange.levelCount     = 1;
+        createInfo.subresourceRange.baseArrayLayer = 0;
+        createInfo.subresourceRange.layerCount     = 1;
 
-//         createInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-//         createInfo.subresourceRange.baseMipLevel   = 0;
-//         createInfo.subresourceRange.levelCount     = 1;
-//         createInfo.subresourceRange.baseArrayLayer = 0;
-//         createInfo.subresourceRange.layerCount     = 1;
+        err = CheckVk(vkCreateImageView(p_gDeviceManager->device->m_device, &createInfo, nullptr, &entry.imageView));
 
-//         err = CheckVk(vkCreateImageView(m_pVulkanDevice->m_device, &createInfo, nullptr, &entry.imageView));
+        VkSemaphoreCreateInfo semCreateInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
 
-//         VkSemaphoreCreateInfo semCreateInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+        err = CheckVk(vkCreateSemaphore(p_gDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
 
-//         err = CheckVk(vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
+        err = CheckVk(vkCreateSemaphore(p_gDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
 
-//         err = CheckVk(vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
+        VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+        fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-//         VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-//         fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+        err = CheckVk(vkCreateFence(p_gDeviceManager->device->m_device, &fenceCreateInfo, nullptr, &entry.fence));
+    }
+}
 
-//         err = CheckVk(vkCreateFence(m_pVulkanDevice->m_device, &fenceCreateInfo, nullptr, &entry.fence));
-//     }
-// }
+bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
+{
+    VkDevice    device    = p_gDeviceManager->device->m_device;
+    VkSemaphore semaphore = argSemaphore ? argSemaphore : getActiveReadSemaphore();
+    VkResult    result;
+    result = CheckVk(vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage));
 
-// bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
-// {
-//     VkDevice    device    = m_pVulkanDevice->m_device;
-//     VkSemaphore semaphore = argSemaphore ? argSemaphore : getActiveReadSemaphore();
-//     VkResult    result;
-//     result = CheckVk(vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage));
+    if (result == VK_SUCCESS)
+    {
+        if (pOut != nullptr)
+        {
+            pOut->image     = getActiveImage();
+            pOut->view      = getActiveImageView();
+            pOut->index     = getActiveImageIndex();
+            pOut->waitSem   = getActiveReadSemaphore();
+            pOut->signalSem = getActiveWrittenSemaphore();
+        }
+        return true;
+    }
+    return false;
+}
 
-//     if (result == VK_SUCCESS)
-//     {
-//         if (pOut != nullptr)
-//         {
-//             pOut->image     = getActiveImage();
-//             pOut->view      = getActiveImageView();
-//             pOut->index     = getActiveImageIndex();
-//             pOut->waitSem   = getActiveReadSemaphore();
-//             pOut->signalSem = getActiveWrittenSemaphore();
-//         }
-//         return true;
-//     }
-//     return false;
-// }
+VkResult SwapChainImpl::QueuePresent(VkQueue &presentQueue)
+{
+    VkSemaphore swapchainWrittenSemaphore = getActiveWrittenSemaphore();
 
-// VkResult SwapChainImpl::QueuePresent(VkQueue &presentQueue)
-// {
-//     VkSemaphore swapchainWrittenSemaphore = getActiveWrittenSemaphore();
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType            = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
-//     VkPresentInfoKHR presentInfo = {};
-//     presentInfo.sType            = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores    = &swapchainWrittenSemaphore;
 
-//     presentInfo.waitSemaphoreCount = 1;
-//     presentInfo.pWaitSemaphores    = &swapchainWrittenSemaphore;
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains    = &swapChain;
+    presentInfo.pImageIndices  = &m_currentImage;
+    presentInfo.pResults       = nullptr;
 
-//     presentInfo.swapchainCount = 1;
-//     presentInfo.pSwapchains    = &swapChain;
-//     presentInfo.pImageIndices  = &m_currentImage;
-//     presentInfo.pResults       = nullptr;
+    m_currentSemaphore++;
 
-//     m_currentSemaphore++;
+    return CheckVk(vkQueuePresentKHR(presentQueue, &presentInfo));
+}
 
-//     return CheckVk(vkQueuePresentKHR(presentQueue, &presentInfo));
-// }
+VkSurfaceFormatKHR SwapChainImpl::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
+{
+    for (const auto &availableFormat : availableFormats)
+    {
+        if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+        {
+            return availableFormat;
+        }
+    }
 
-// VkSurfaceFormatKHR SwapChainImpl::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
-// {
-//     for (const auto &availableFormat : availableFormats)
-//     {
-//         if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
-//         {
-//             return availableFormat;
-//         }
-//     }
+    return availableFormats[0];
+}
 
-//     return availableFormats[0];
-// }
+VkPresentModeKHR SwapChainImpl::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
+{
+    for (const auto &availablePresentMode : availablePresentModes)
+    {
+        if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+        {
+            return availablePresentMode;
+        }
+    }
 
-// VkPresentModeKHR SwapChainImpl::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
-// {
-//     for (const auto &availablePresentMode : availablePresentModes)
-//     {
-//         if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-//         {
-//             return availablePresentMode;
-//         }
-//     }
+    return VK_PRESENT_MODE_FIFO_KHR;
+}
 
-//     return VK_PRESENT_MODE_FIFO_KHR;
-// }
+VkExtent2D SwapChainImpl::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
+{
+    VkExtent2D extent = {};
+    if (capabilities.currentExtent.width == 0xFFFFFFFF && swapChainExtent.width != 0 && swapChainExtent.height != 0)
+    {
+        extent.width  = GRAPHICS_min(GRAPHICS_max(swapChainExtent.width, capabilities.minImageExtent.width), capabilities.maxImageExtent.width);
+        extent.height = GRAPHICS_min(GRAPHICS_max(swapChainExtent.height, capabilities.minImageExtent.height), capabilities.maxImageExtent.height);
+    }
+    else
+    {
+        extent = capabilities.currentExtent;
+    }
+    swapChainExtent.width  = GRAPHICS_max(extent.width, 1u);
+    swapChainExtent.height = GRAPHICS_max(extent.height, 1u);
 
-// VkExtent2D SwapChainImpl::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
-// {
-//     VkExtent2D extent = {};
-//     if (capabilities.currentExtent.width == 0xFFFFFFFF && swapChainExtent.width != 0 && swapChainExtent.height != 0)
-//     {
-//         extent.width  = GRAPHICS_min(GRAPHICS_max(swapChainExtent.width, capabilities.minImageExtent.width), capabilities.maxImageExtent.width);
-//         extent.height = GRAPHICS_min(GRAPHICS_max(swapChainExtent.height, capabilities.minImageExtent.height), capabilities.maxImageExtent.height);
-//     }
-//     else
-//     {
-//         extent = capabilities.currentExtent;
-//     }
-//     swapChainExtent.width  = GRAPHICS_max(extent.width, 1u);
-//     swapChainExtent.height = GRAPHICS_max(extent.height, 1u);
+    return swapChainExtent;
+}
 
-//     return swapChainExtent;
-// }
+VkSemaphore SwapChainImpl::getActiveWrittenSemaphore() const
+{
+    return m_entries[(m_currentSemaphore % m_imageCount)].writtenSemaphore;
+}
 
-// VkSemaphore SwapChainImpl::getActiveWrittenSemaphore() const
-// {
-//     return m_entries[(m_currentSemaphore % m_imageCount)].writtenSemaphore;
-// }
+VkSemaphore SwapChainImpl::getActiveReadSemaphore() const
+{
+    return m_entries[(m_currentSemaphore % m_imageCount)].readSemaphore;
+}
 
-// VkSemaphore SwapChainImpl::getActiveReadSemaphore() const
-// {
-//     return m_entries[(m_currentSemaphore % m_imageCount)].readSemaphore;
-// }
+VkImage SwapChainImpl::getActiveImage() const
+{
+    return m_entries[m_currentImage].image;
+}
 
-// VkImage SwapChainImpl::getActiveImage() const
-// {
-//     return m_entries[m_currentImage].image;
-// }
+VkImageView SwapChainImpl::getActiveImageView() const
+{
+    return m_entries[m_currentImage].imageView;
+}
 
-// VkImageView SwapChainImpl::getActiveImageView() const
-// {
-//     return m_entries[m_currentImage].imageView;
-// }
-
-// FLYENGINE_END_NAMESPACE
+FLYENGINE_END_NAMESPACE
