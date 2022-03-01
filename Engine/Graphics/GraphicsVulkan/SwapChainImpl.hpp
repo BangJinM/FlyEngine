@@ -37,8 +37,6 @@ struct Entry
     // be aware semaphore index may not match active image index
     VkSemaphore readSemaphore{};
     VkSemaphore writtenSemaphore{};
-
-    VkFence fence{};
 };
 
 class DeviceManagerImpl;
@@ -65,14 +63,13 @@ public:
     VkFormat   GetVkFormat() { return swapChainImageFormat; }
     VkExtent2D GetSwapChainExtent() { return swapChainExtent; }
 
-    VkSemaphore getActiveWrittenSemaphore() const;
-    VkSemaphore getActiveReadSemaphore() const;
-    VkImage     getActiveImage() const;
-    VkImageView getActiveImageView() const;
-    uint32_t    getActiveImageIndex() const { return m_currentImage; }
-    VkImageView getImageView(int index) const { return m_entries[index].imageView; }
+    VkSemaphore GetActiveWrittenSemaphore() const;
+    VkSemaphore GetActiveReadSemaphore() const;
+    VkImage     GetActiveImage() const;
+    VkImageView GetActiveImageView() const;
+    uint32_t    GetActiveImageIndex() const { return m_currentImage; }
+    VkImageView GetImageView(int index) const { return m_entries[index].imageView; }
     uint32_t    GetImageCount() { return m_imageCount; }
-    VkFence     GetFence() { return m_entries[m_currentImage].fence; }
 
 public:
     uint32_t       m_currentImage{};

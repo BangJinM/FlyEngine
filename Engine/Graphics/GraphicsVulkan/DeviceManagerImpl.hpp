@@ -5,12 +5,13 @@
 #include "GraphicsVulkan/Instance.hpp"
 #include "GraphicsVulkan/ShaderImpl.hpp"
 #include "GraphicsVulkan/SurfaceKHR.hpp"
+#include "GraphicsVulkan/SwapChainImpl.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
 
 struct DebugDetails
 {  // VK_LAYER_KHRONOS_validation or VK_LAYER_LUNARG_standard_validation
-    std::vector<const char *> validationLayers       = {"VK_LAYER_KHRONOS_validation"};
+    std::vector<const char *> validationLayers       = {"VK_LAYER_LUNARG_standard_validation"};
     std::vector<const char *> deviceExtensions       = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     bool                      enableValidationLayers = true;
 };
@@ -33,10 +34,11 @@ public:
     DeviceManagerImpl();
     ~DeviceManagerImpl();
 
-    Instance    *instanceImpl;
-    SurfaceKHR  *surfaceKHR;
-    DebugDetails debugDetails;
-    Device      *device;
+    Instance      *instanceImpl;
+    SurfaceKHR    *surfaceKHR;
+    DebugDetails   debugDetails;
+    Device        *device;
+    SwapChainImpl *swapChainImpl;
 };
 
 FLYENGINE_END_NAMESPACE

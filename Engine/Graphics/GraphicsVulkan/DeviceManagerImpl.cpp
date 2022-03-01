@@ -22,10 +22,12 @@ bool DeviceManagerImpl::Initialize(NativeWindow window)
     instanceImpl->Initialize();
     surfaceKHR->Initialize(window);
     device->Initialize();
+    swapChainImpl->Initialize();
     return true;
 }
 bool DeviceManagerImpl::Finalize()
 {
+    swapChainImpl->Finalize();
     device->Finalize();
     surfaceKHR->Finalize();
     instanceImpl->Finalize();
@@ -36,15 +38,17 @@ void DeviceManagerImpl::Tick(float deltaTime) {}
 
 DeviceManagerImpl::DeviceManagerImpl()
 {
-    surfaceKHR   = new SurfaceKHR();
-    instanceImpl = new Instance();
-    device       = new Device();
+    surfaceKHR    = new SurfaceKHR();
+    instanceImpl  = new Instance();
+    device        = new Device();
+    swapChainImpl = new SwapChainImpl();
 }
 DeviceManagerImpl::~DeviceManagerImpl()
 {
     delete instanceImpl;
     delete surfaceKHR;
     delete device;
+    delete swapChainImpl;
 }
 
 FLYENGINE_END_NAMESPACE

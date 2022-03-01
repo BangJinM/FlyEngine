@@ -33,7 +33,6 @@ void SwapChainImpl::Finalize()
 {
     for (auto entry : m_entries)
     {
-        vkDestroyFence(p_gDeviceManager->device->m_device, entry.fence, nullptr);
         vkDestroyImageView(p_gDeviceManager->device->m_device, entry.imageView, nullptr);
         vkDestroySemaphore(p_gDeviceManager->device->m_device, entry.readSemaphore, nullptr);
         vkDestroySemaphore(p_gDeviceManager->device->m_device, entry.writtenSemaphore, nullptr);
@@ -135,18 +134,13 @@ void SwapChainImpl::CreateImageViews()
         err = CheckVk(vkCreateSemaphore(p_gDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
 
         err = CheckVk(vkCreateSemaphore(p_gDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
-
-        VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-        fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-        err = CheckVk(vkCreateFence(p_gDeviceManager->device->m_device, &fenceCreateInfo, nullptr, &entry.fence));
     }
 }
 
 bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
 {
     VkDevice    device    = p_gDeviceManager->device->m_device;
-    VkSemaphore semaphore = argSemaphore ? argSemaphore : getActiveReadSemaphore();
+    VkSemaphore semaphore = argSemaphore ? argSemaphore : GetActiveReadSemaphore();
     VkResult    result;
     result = CheckVk(vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage));
 
@@ -154,11 +148,11 @@ bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOu
     {
         if (pOut != nullptr)
         {
-            pOut->image     = getActiveImage();
-            pOut->view      = getActiveImageView();
-            pOut->index     = getActiveImageIndex();
-            pOut->waitSem   = getActiveReadSemaphore();
-            pOut->signalSem = getActiveWrittenSemaphore();
+            pOut->image     = GetActiveImage();
+            pOut->view      = GetActiveImageView();
+            pOut->index     = GetActiveImageIndex();
+            pOut->waitSem   = GetActiveReadSemaphore();
+            pOut->signalSem = GetActiveWrittenSemaphore();
         }
         return true;
     }
@@ -167,7 +161,7 @@ bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOu
 
 VkResult SwapChainImpl::QueuePresent(VkQueue &presentQueue)
 {
-    VkSemaphore swapchainWrittenSemaphore = getActiveWrittenSemaphore();
+    VkSemaphore swapchainWrittenSemaphore = GetActiveWrittenSemaphore();
 
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType            = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -229,22 +223,22 @@ VkExtent2D SwapChainImpl::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capab
     return swapChainExtent;
 }
 
-VkSemaphore SwapChainImpl::getActiveWrittenSemaphore() const
+VkSemaphore SwapChainImpl::GetActiveWrittenSemaphore() const
 {
     return m_entries[(m_currentSemaphore % m_imageCount)].writtenSemaphore;
 }
 
-VkSemaphore SwapChainImpl::getActiveReadSemaphore() const
+VkSemaphore SwapChainImpl::GetActiveReadSemaphore() const
 {
     return m_entries[(m_currentSemaphore % m_imageCount)].readSemaphore;
 }
 
-VkImage SwapChainImpl::getActiveImage() const
+VkImage SwapChainImpl::GetActiveImage() const
 {
     return m_entries[m_currentImage].image;
 }
 
-VkImageView SwapChainImpl::getActiveImageView() const
+VkImageView SwapChainImpl::GetActiveImageView() const
 {
     return m_entries[m_currentImage].imageView;
 }
