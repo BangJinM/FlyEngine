@@ -47,13 +47,13 @@ void Device::CreateLogicalDevice()
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
-    createInfo.enabledExtensionCount   = static_cast<uint32_t>(p_gDeviceManager->debugDetails.deviceExtensions.size());
-    createInfo.ppEnabledExtensionNames = p_gDeviceManager->debugDetails.deviceExtensions.data();
+    createInfo.enabledExtensionCount   = static_cast<uint32_t>(g_pDeviceManager->debugDetails.deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = g_pDeviceManager->debugDetails.deviceExtensions.data();
 
-    if (p_gDeviceManager->debugDetails.enableValidationLayers)
+    if (g_pDeviceManager->debugDetails.enableValidationLayers)
     {
-        createInfo.enabledLayerCount   = static_cast<uint32_t>(p_gDeviceManager->debugDetails.validationLayers.size());
-        createInfo.ppEnabledLayerNames = p_gDeviceManager->debugDetails.validationLayers.data();
+        createInfo.enabledLayerCount   = static_cast<uint32_t>(g_pDeviceManager->debugDetails.validationLayers.size());
+        createInfo.ppEnabledLayerNames = g_pDeviceManager->debugDetails.validationLayers.data();
     }
     else
     {
@@ -72,7 +72,7 @@ void Device::CreateLogicalDevice()
 void Device::PickPhysicalDevice()
 {
     uint32_t deviceCount = 0;
-    vkEnumeratePhysicalDevices(p_gDeviceManager->instanceImpl->GetVkInstance(), &deviceCount, nullptr);
+    vkEnumeratePhysicalDevices(g_pDeviceManager->instanceImpl->GetVkInstance(), &deviceCount, nullptr);
 
     if (deviceCount <= 0)
     {
@@ -81,7 +81,7 @@ void Device::PickPhysicalDevice()
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
 
-    auto err = vkEnumeratePhysicalDevices(p_gDeviceManager->instanceImpl->GetVkInstance(), &deviceCount, devices.data());
+    auto err = vkEnumeratePhysicalDevices(g_pDeviceManager->instanceImpl->GetVkInstance(), &deviceCount, devices.data());
     assert(deviceCount >= 0);
 
     for (const auto &device : devices)
@@ -123,8 +123,8 @@ bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice device)
     std::vector<VkExtensionProperties> availableExtensions(extensionCount);
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
-    std::set<std::string> requiredExtensions(p_gDeviceManager->debugDetails.deviceExtensions.begin(),
-                                             p_gDeviceManager->debugDetails.deviceExtensions.end());
+    std::set<std::string> requiredExtensions(g_pDeviceManager->debugDetails.deviceExtensions.begin(),
+                                             g_pDeviceManager->debugDetails.deviceExtensions.end());
 
     for (const auto &extension : availableExtensions)
     {
@@ -153,7 +153,7 @@ QueueFamilyIndices Device::FindQueueFamilies(VkPhysicalDevice device)
         }
 
         VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(device, index, p_gDeviceManager->surfaceKHR->surfaceKHR, &presentSupport);
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, index, g_pDeviceManager->surfaceKHR->surfaceKHR, &presentSupport);
 
         if (presentSupport)
         {
@@ -175,24 +175,24 @@ SwapChainSupportDetails Device::QuerySwapChainSupport(VkPhysicalDevice device)
 {
     SwapChainSupportDetails details;
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &details.capabilities);
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, g_pDeviceManager->surfaceKHR->surfaceKHR, &details.capabilities);
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &formatCount, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, g_pDeviceManager->surfaceKHR->surfaceKHR, &formatCount, nullptr);
 
     if (formatCount != 0)
     {
         details.formats.resize(formatCount);
-        vkGetPhysicalDeviceSurfaceFormatsKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &formatCount, details.formats.data());
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, g_pDeviceManager->surfaceKHR->surfaceKHR, &formatCount, details.formats.data());
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, g_pDeviceManager->surfaceKHR->surfaceKHR, &presentModeCount, nullptr);
 
     if (presentModeCount != 0)
     {
         details.presentModes.resize(presentModeCount);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(device, p_gDeviceManager->surfaceKHR->surfaceKHR, &presentModeCount, details.presentModes.data());
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, g_pDeviceManager->surfaceKHR->surfaceKHR, &presentModeCount, details.presentModes.data());
     }
 
     return details;

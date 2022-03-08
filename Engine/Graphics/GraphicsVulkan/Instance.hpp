@@ -11,7 +11,7 @@
 FLYENGINE_BEGIN_NAMESPACE
 
 class DeviceManagerImpl;
-extern DeviceManagerImpl *p_gDeviceManager;
+extern DeviceManagerImpl *g_pDeviceManager;
 class Instance : public Base
 {
 public:

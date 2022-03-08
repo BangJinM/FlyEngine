@@ -155,7 +155,7 @@ void Instance::Initialize()
 
 void Instance::Finalize()
 {
-    if (p_gDeviceManager->debugDetails.enableValidationLayers)
+    if (g_pDeviceManager->debugDetails.enableValidationLayers)
     {
         auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_Instance, "vkDestroyDebugUtilsMessengerEXT");
         if (func != nullptr)
@@ -169,7 +169,7 @@ void Instance::Finalize()
 
 void Instance::CreateInstance()
 {
-    if (p_gDeviceManager->debugDetails.enableValidationLayers && !CheckValidationLayerSupport())
+    if (g_pDeviceManager->debugDetails.enableValidationLayers && !CheckValidationLayerSupport())
     {
         SHOWERROR("validation layers requested, but not available!");
     }
@@ -191,10 +191,10 @@ void Instance::CreateInstance()
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
-    if (p_gDeviceManager->debugDetails.enableValidationLayers)
+    if (g_pDeviceManager->debugDetails.enableValidationLayers)
     {
-        createInfo.enabledLayerCount   = static_cast<uint32_t>(p_gDeviceManager->debugDetails.validationLayers.size());
-        createInfo.ppEnabledLayerNames = p_gDeviceManager->debugDetails.validationLayers.data();
+        createInfo.enabledLayerCount   = static_cast<uint32_t>(g_pDeviceManager->debugDetails.validationLayers.size());
+        createInfo.ppEnabledLayerNames = g_pDeviceManager->debugDetails.validationLayers.data();
 
         PopulateDebugMessengerCreateInfo(debugCreateInfo);
         createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT *)&debugCreateInfo;
@@ -231,7 +231,7 @@ void Instance::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoE
 
 void Instance::SetupDebugMessenger()
 {
-    if (!p_gDeviceManager->debugDetails.enableValidationLayers)
+    if (!g_pDeviceManager->debugDetails.enableValidationLayers)
         return;
 
     VkDebugUtilsMessengerCreateInfoEXT createInfo;
@@ -252,7 +252,7 @@ bool Instance::CheckValidationLayerSupport()
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-    for (const char *layerName : p_gDeviceManager->debugDetails.validationLayers)
+    for (const char *layerName : g_pDeviceManager->debugDetails.validationLayers)
     {
         bool layerFound = false;
 
@@ -355,7 +355,7 @@ std::vector<const char *> Instance::GetRequiredExtensions()
             }
             if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, instance_extensions[i].extensionName))
             {
-                if (p_gDeviceManager->debugDetails.enableValidationLayers)  // 是否调试
+                if (g_pDeviceManager->debugDetails.enableValidationLayers)  // 是否调试
                 {
                     extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
                 }

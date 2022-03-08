@@ -40,7 +40,7 @@ struct Entry
 };
 
 class DeviceManagerImpl;
-extern DeviceManagerImpl *p_gDeviceManager;
+extern DeviceManagerImpl *g_pDeviceManager;
 
 class SwapChainImpl : public Base
 {

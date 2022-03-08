@@ -23,39 +23,8 @@ const uint32_t WIDTH  = 800;
 const uint32_t HEIGHT = 600;
 
 FLYENGINE_BEGIN_NAMESPACE
-DeviceManagerImpl *p_gDeviceManager = new DeviceManagerImpl();
+DeviceManagerImpl *g_pDeviceManager = new DeviceManagerImpl();
 FLYENGINE_END_NAMESPACE
-
-VkResult CreateDebugUtilsMessengerEXT(VkInstance                                instance,
-                                      const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                      const VkAllocationCallbacks              *pAllocator,
-                                      VkDebugUtilsMessengerEXT                 *pDebugMessenger)
-{
-    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-    if (func != nullptr)
-    {
-        return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-    }
-    else
-    {
-        return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-}
-
-struct QueueFamilyIndices
-{
-    std::optional<uint32_t> graphicsFamily;
-    std::optional<uint32_t> presentFamily;
-
-    bool isComplete() { return graphicsFamily.has_value() && presentFamily.has_value(); }
-};
-
-struct SwapChainSupportDetails
-{
-    VkSurfaceCapabilitiesKHR        capabilities;
-    std::vector<VkSurfaceFormatKHR> formats;
-    std::vector<VkPresentModeKHR>   presentModes;
-};
 
 class HelloTriangleApplication
 {
@@ -114,13 +83,13 @@ private:
 
     void initVulkan()
     {
-        fly::p_gDeviceManager->Initialize(fly::NativeWindow(glfwGetWin32Window(window)));
-        instance       = ((fly::DeviceManagerImpl *)fly::p_gDeviceManager)->instanceImpl->GetVkInstance();
-        surface        = fly::p_gDeviceManager->surfaceKHR->surfaceKHR;
-        device         = fly::p_gDeviceManager->device->m_device;
-        physicalDevice = fly::p_gDeviceManager->device->m_physicalDevice;
-        graphicsQueue  = fly::p_gDeviceManager->device->m_graphicsQueue;
-        presentQueue   = fly::p_gDeviceManager->device->m_presentQueue;
+        fly::g_pDeviceManager->Initialize(fly::NativeWindow(glfwGetWin32Window(window)));
+        instance       = ((fly::DeviceManagerImpl *)fly::g_pDeviceManager)->instanceImpl->GetVkInstance();
+        surface        = fly::g_pDeviceManager->surfaceKHR->surfaceKHR;
+        device         = fly::g_pDeviceManager->device->m_device;
+        physicalDevice = fly::g_pDeviceManager->device->m_physicalDevice;
+        graphicsQueue  = fly::g_pDeviceManager->device->m_graphicsQueue;
+        presentQueue   = fly::g_pDeviceManager->device->m_presentQueue;
 
         createRenderPass();
         createGraphicsPipeline();
@@ -145,7 +114,7 @@ private:
     {
         vkDestroyCommandPool(device, commandPool, nullptr);
 
-        fly::p_gDeviceManager->Finalize();
+        fly::g_pDeviceManager->Finalize();
 
         glfwDestroyWindow(window);
 
@@ -173,7 +142,7 @@ private:
     void createRenderPass()
     {
         VkAttachmentDescription colorAttachment{};
-        colorAttachment.format         = fly::p_gDeviceManager->swapChainImpl->swapChainImageFormat;
+        colorAttachment.format         = fly::g_pDeviceManager->swapChainImpl->swapChainImageFormat;
         colorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
         colorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
         colorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
@@ -222,7 +191,7 @@ private:
         fly::ShaderInfo shaderInfo{"sampler",
                                    {{fly::ShaderStageFlagBit::VERTEX, vertShaderCode}, {fly::ShaderStageFlagBit::FRAGMENT, vertShaderCode}}};
 
-        auto shader = fly::p_gDeviceManager->CreateShader(shaderInfo);
+        auto shader = fly::g_pDeviceManager->CreateShader(shaderInfo);
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -254,14 +223,14 @@ private:
         VkViewport viewport{};
         viewport.x        = 0.0f;
         viewport.y        = 0.0f;
-        viewport.width    = (float)fly::p_gDeviceManager->swapChainImpl->swapChainExtent.width;
-        viewport.height   = (float)fly::p_gDeviceManager->swapChainImpl->swapChainExtent.height;
+        viewport.width    = (float)fly::g_pDeviceManager->swapChainImpl->swapChainExtent.width;
+        viewport.height   = (float)fly::g_pDeviceManager->swapChainImpl->swapChainExtent.height;
         viewport.minDepth = 0.0f;
         viewport.maxDepth = 1.0f;
 
         VkRect2D scissor{};
         scissor.offset = {0, 0};
-        scissor.extent = fly::p_gDeviceManager->swapChainImpl->swapChainExtent;
+        scissor.extent = fly::g_pDeviceManager->swapChainImpl->swapChainExtent;
 
         VkPipelineViewportStateCreateInfo viewportState{};
         viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -337,19 +306,19 @@ private:
 
     void createFramebuffers()
     {
-        swapChainFramebuffers.resize(fly::p_gDeviceManager->swapChainImpl->GetImageCount());
+        swapChainFramebuffers.resize(fly::g_pDeviceManager->swapChainImpl->GetImageCount());
 
         for (size_t i = 0; i < swapChainFramebuffers.size(); i++)
         {
-            VkImageView attachments[] = {fly::p_gDeviceManager->swapChainImpl->GetImageView(i)};
+            VkImageView attachments[] = {fly::g_pDeviceManager->swapChainImpl->GetImageView(i)};
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             framebufferInfo.renderPass      = renderPass;
             framebufferInfo.attachmentCount = 1;
             framebufferInfo.pAttachments    = attachments;
-            framebufferInfo.width           = fly::p_gDeviceManager->swapChainImpl->swapChainExtent.width;
-            framebufferInfo.height          = fly::p_gDeviceManager->swapChainImpl->swapChainExtent.height;
+            framebufferInfo.width           = fly::g_pDeviceManager->swapChainImpl->swapChainExtent.width;
+            framebufferInfo.height          = fly::g_pDeviceManager->swapChainImpl->swapChainExtent.height;
             framebufferInfo.layers          = 1;
 
             if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS)
@@ -361,7 +330,7 @@ private:
 
     void createCommandPool()
     {
-        QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
+        fly::QueueFamilyIndices queueFamilyIndices = fly::g_pDeviceManager->device->FindQueueFamilies(physicalDevice);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -403,7 +372,7 @@ private:
             renderPassInfo.renderPass        = renderPass;
             renderPassInfo.framebuffer       = swapChainFramebuffers[i];
             renderPassInfo.renderArea.offset = {0, 0};
-            renderPassInfo.renderArea.extent = fly::p_gDeviceManager->swapChainImpl->swapChainExtent;
+            renderPassInfo.renderArea.extent = fly::g_pDeviceManager->swapChainImpl->swapChainExtent;
 
             VkClearValue clearColor        = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
             renderPassInfo.clearValueCount = 1;
@@ -426,7 +395,7 @@ private:
 
     void createSyncObjects()
     {
-        imagesInFlight.resize(fly::p_gDeviceManager->swapChainImpl->GetImageCount(), VK_NULL_HANDLE);
+        imagesInFlight.resize(fly::g_pDeviceManager->swapChainImpl->GetImageCount(), VK_NULL_HANDLE);
 
         VkSemaphoreCreateInfo semaphoreInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -452,13 +421,13 @@ private:
         //{
         //     onFramebufferSize(w, h);
         // }
-        if (!fly::p_gDeviceManager->swapChainImpl->Acquire())
+        if (!fly::g_pDeviceManager->swapChainImpl->Acquire())
         {
             assert(!"This shouldn't happen");
         }
 
         // Use a fence to wait until the command buffer has finished execution before using it again
-        uint32_t imageIndex = fly::p_gDeviceManager->swapChainImpl->GetActiveImageIndex();
+        uint32_t imageIndex = fly::g_pDeviceManager->swapChainImpl->GetActiveImageIndex();
         while (vkWaitForFences(device, 1, &imagesInFlight[imageIndex], VK_TRUE, 10000) == VkResult::VK_TIMEOUT)
         {}
     }
@@ -467,12 +436,12 @@ private:
     {
          prepareFrame();
 
-        uint32_t imageIndex = fly::p_gDeviceManager->swapChainImpl->GetActiveImageIndex();
+        uint32_t imageIndex = fly::g_pDeviceManager->swapChainImpl->GetActiveImageIndex();
         vkResetFences(device, 1, &imagesInFlight[imageIndex]);
 
         const VkPipelineStageFlags waitStageMask  = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        VkSemaphore                semaphoreRead  = fly::p_gDeviceManager->swapChainImpl->GetActiveReadSemaphore();
-        VkSemaphore                semaphoreWrite = fly::p_gDeviceManager->swapChainImpl->GetActiveWrittenSemaphore();
+        VkSemaphore                semaphoreRead  = fly::g_pDeviceManager->swapChainImpl->GetActiveReadSemaphore();
+        VkSemaphore                semaphoreWrite = fly::g_pDeviceManager->swapChainImpl->GetActiveWrittenSemaphore();
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -492,7 +461,7 @@ private:
             throw std::runtime_error("failed to submit draw command buffer!");
         }
 
-        fly::p_gDeviceManager->swapChainImpl->QueuePresent(graphicsQueue);
+        fly::g_pDeviceManager->swapChainImpl->QueuePresent(graphicsQueue);
     }
 
     VkShaderModule createShaderModule(const std::vector<char> &code)
@@ -509,43 +478,6 @@ private:
         }
 
         return shaderModule;
-    }
-
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
-    {
-        QueueFamilyIndices indices;
-
-        uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-        int i = 0;
-        for (const auto &queueFamily : queueFamilies)
-        {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-            {
-                indices.graphicsFamily = i;
-            }
-
-            VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-
-            if (presentSupport)
-            {
-                indices.presentFamily = i;
-            }
-
-            if (indices.isComplete())
-            {
-                break;
-            }
-
-            i++;
-        }
-
-        return indices;
     }
 
     static std::vector<char> readFile(const std::string &filename)

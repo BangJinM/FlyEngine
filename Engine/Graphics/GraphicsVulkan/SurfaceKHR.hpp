@@ -23,5 +23,5 @@ public:
     NativeWindow window;
     VkSurfaceKHR surfaceKHR;
 };
-extern DeviceManagerImpl *p_gDeviceManager;
+extern DeviceManagerImpl *g_pDeviceManager;
 FLYENGINE_END_NAMESPACE

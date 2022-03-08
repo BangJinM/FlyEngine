@@ -14,7 +14,7 @@ void SurfaceKHR::Initialize(NativeWindow window)
 }
 void SurfaceKHR::Finalize()
 {
-    vkDestroySurfaceKHR(p_gDeviceManager->instanceImpl->GetVkInstance(), surfaceKHR, nullptr);
+    vkDestroySurfaceKHR(g_pDeviceManager->instanceImpl->GetVkInstance(), surfaceKHR, nullptr);
 }
 
 void SurfaceKHR::CreateSurface()
@@ -60,7 +60,7 @@ void SurfaceKHR::CreateSurface()
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR};
     surfaceCreateInfo.hinstance = (HINSTANCE)GetModuleHandle(0);
     surfaceCreateInfo.hwnd      = (HWND)window.hWnd;
-    CheckVk(vkCreateWin32SurfaceKHR(p_gDeviceManager->instanceImpl->GetVkInstance(), &surfaceCreateInfo, nullptr, &surfaceKHR));
+    CheckVk(vkCreateWin32SurfaceKHR(g_pDeviceManager->instanceImpl->GetVkInstance(), &surfaceCreateInfo, nullptr, &surfaceKHR));
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
     VkMetalSurfaceCreateInfoEXT surfaceCreateInfo{VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT};
     surfaceCreateInfo.pLayer = (CAMetalLayer *)_windowHandle;

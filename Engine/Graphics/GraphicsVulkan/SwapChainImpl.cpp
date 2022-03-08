@@ -33,12 +33,12 @@ void SwapChainImpl::Finalize()
 {
     for (auto entry : m_entries)
     {
-        vkDestroyImageView(p_gDeviceManager->device->m_device, entry.imageView, nullptr);
-        vkDestroySemaphore(p_gDeviceManager->device->m_device, entry.readSemaphore, nullptr);
-        vkDestroySemaphore(p_gDeviceManager->device->m_device, entry.writtenSemaphore, nullptr);
+        vkDestroyImageView(g_pDeviceManager->device->m_device, entry.imageView, nullptr);
+        vkDestroySemaphore(g_pDeviceManager->device->m_device, entry.readSemaphore, nullptr);
+        vkDestroySemaphore(g_pDeviceManager->device->m_device, entry.writtenSemaphore, nullptr);
     }
 
-    vkDestroySwapchainKHR(p_gDeviceManager->device->m_device, swapChain, nullptr);
+    vkDestroySwapchainKHR(g_pDeviceManager->device->m_device, swapChain, nullptr);
     swapChain = VK_NULL_HANDLE;
 
     m_entries.clear();
@@ -46,8 +46,8 @@ void SwapChainImpl::Finalize()
 
 void SwapChainImpl::CreateSwapChain()
 {
-    VkPhysicalDevice        device           = p_gDeviceManager->device->m_physicalDevice;
-    SwapChainSupportDetails swapChainSupport = p_gDeviceManager->device->QuerySwapChainSupport(device);
+    VkPhysicalDevice        device           = g_pDeviceManager->device->m_physicalDevice;
+    SwapChainSupportDetails swapChainSupport = g_pDeviceManager->device->QuerySwapChainSupport(device);
 
     VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
     VkPresentModeKHR   presentMode   = ChooseSwapPresentMode(swapChainSupport.presentModes);
@@ -59,7 +59,7 @@ void SwapChainImpl::CreateSwapChain()
         imageCount = swapChainSupport.capabilities.maxImageCount;
     }
 
-    auto surface = p_gDeviceManager->surfaceKHR->surfaceKHR;
+    auto surface = g_pDeviceManager->surfaceKHR->surfaceKHR;
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType   = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -72,7 +72,7 @@ void SwapChainImpl::CreateSwapChain()
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    QueueFamilyIndices indices              = p_gDeviceManager->device->FindQueueFamilies(p_gDeviceManager->device->m_physicalDevice);
+    QueueFamilyIndices indices              = g_pDeviceManager->device->FindQueueFamilies(g_pDeviceManager->device->m_physicalDevice);
     uint32_t           queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
     if (indices.graphicsFamily != indices.presentFamily)
@@ -91,7 +91,7 @@ void SwapChainImpl::CreateSwapChain()
     createInfo.presentMode    = presentMode;
     createInfo.clipped        = VK_TRUE;
 
-    CheckVk(vkCreateSwapchainKHR(p_gDeviceManager->device->m_device, &createInfo, nullptr, &swapChain));
+    CheckVk(vkCreateSwapchainKHR(g_pDeviceManager->device->m_device, &createInfo, nullptr, &swapChain));
 
     swapChainImageFormat = surfaceFormat.format;
 }
@@ -99,9 +99,9 @@ void SwapChainImpl::CreateSwapChain()
 void SwapChainImpl::CreateImageViews()
 {
     VkResult err;
-    CheckVk(vkGetSwapchainImagesKHR(p_gDeviceManager->device->m_device, swapChain, &m_imageCount, nullptr));
+    CheckVk(vkGetSwapchainImagesKHR(g_pDeviceManager->device->m_device, swapChain, &m_imageCount, nullptr));
     std::vector<VkImage> images(m_imageCount);
-    CheckVk(vkGetSwapchainImagesKHR(p_gDeviceManager->device->m_device, swapChain, &m_imageCount, images.data()));
+    CheckVk(vkGetSwapchainImagesKHR(g_pDeviceManager->device->m_device, swapChain, &m_imageCount, images.data()));
 
     m_entries.resize(m_imageCount);
 
@@ -127,19 +127,19 @@ void SwapChainImpl::CreateImageViews()
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount     = 1;
 
-        err = CheckVk(vkCreateImageView(p_gDeviceManager->device->m_device, &createInfo, nullptr, &entry.imageView));
+        err = CheckVk(vkCreateImageView(g_pDeviceManager->device->m_device, &createInfo, nullptr, &entry.imageView));
 
         VkSemaphoreCreateInfo semCreateInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
 
-        err = CheckVk(vkCreateSemaphore(p_gDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
+        err = CheckVk(vkCreateSemaphore(g_pDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
 
-        err = CheckVk(vkCreateSemaphore(p_gDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
+        err = CheckVk(vkCreateSemaphore(g_pDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
     }
 }
 
 bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
 {
-    VkDevice    device    = p_gDeviceManager->device->m_device;
+    VkDevice    device    = g_pDeviceManager->device->m_device;
     VkSemaphore semaphore = argSemaphore ? argSemaphore : GetActiveReadSemaphore();
     VkResult    result;
     result = CheckVk(vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage));

@@ -54,5 +54,5 @@ public:
     VkQueue          m_graphicsQueue;
     VkQueue          m_presentQueue;
 };
-extern DeviceManagerImpl *p_gDeviceManager;
+extern DeviceManagerImpl *g_pDeviceManager;
 FLYENGINE_END_NAMESPACE
