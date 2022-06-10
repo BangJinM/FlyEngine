@@ -1,0 +1,6 @@
+# 添加依赖库
+link_libraries(fly_engine)
+
+# 添加可执行目标
+add_executable(test_scene Scene.cpp)
+add_my_test(test_scene)

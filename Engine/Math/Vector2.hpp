@@ -1,11 +1,11 @@
 ﻿#pragma once
 
+#include <Common/BaseDefines.hpp>
 #include <cstdint>
 #include <ostream>
 
 namespace fly
 {
-
 template <typename T>
 class Vector2
 {
@@ -208,11 +208,11 @@ constexpr auto operator/(const Vector2<K> &left, const J &right);
 template <typename K>
 std::ostream &operator<<(std::ostream &stream, const Vector2<K> &vector);
 
-using Vector2f  = Vector2<float>;
-using Vector2d  = Vector2<double>;
-using Vector2i  = Vector2<int32_t>;
-using Vector2ui = Vector2<uint32_t>;
-using Vector2us = Vector2<uint16_t>;
+using Vector2f  = Vector2<Float32>;
+using Vector2d  = Vector2<Double>;
+using Vector2i  = Vector2<Int32>;
+using Vector2ui = Vector2<Uint32>;
+using Vector2us = Vector2<Uint16>;
 };  // namespace fly
 
 #include "Vector2.inl"

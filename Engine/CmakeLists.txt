@@ -5,8 +5,12 @@ include(Log/CmakeLists.txt)
 include(Memory/CmakeLists.txt)
 include(File/CmakeLists.txt)
 include(Math/CmakeLists.txt)
+include(Graphics/CmakeLists.txt)
+include(Scene/CmakeLists.txt)
 
 add_library(fly_engine 
+    ${GRAPHICS_CORE_FILES} 
+    ${GRAPHICS_VULKAN_FILES}
     ${ENGINE_APP_FILES} 
     ${ENGINE_COMMON_FILES} 
     ${ENGINE_PLATFORMS_FILES} 
@@ -14,4 +18,5 @@ add_library(fly_engine
     ${ENGINE_MEMORY_FILES}
     ${ENGINE_FILE_FILES}
     ${ENGINE_MATH_FILES}
+    ${ENGINE_SCENE_FILES}
 ) 

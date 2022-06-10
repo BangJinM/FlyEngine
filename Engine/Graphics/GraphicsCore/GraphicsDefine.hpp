@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Common/BaseDefines.hpp"
+#include "Common/BaseDefines.hpp"
 
 #include <string>
 #include <vector>
