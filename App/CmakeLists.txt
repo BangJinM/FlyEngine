@@ -11,10 +11,3 @@ set(ENGINE_APP_FILES
     ${SOURCE_CC_FILES}
     ${SOURCE_C_FILES}
 )
-
-find_package(glfw3 CONFIG REQUIRED)
-link_libraries(glfw)
-
-add_library(fly_engine_app
-    ${ENGINE_APP_FILES} 
-) 

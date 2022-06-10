@@ -3,7 +3,7 @@
 #include "Common/BaseDefines.hpp"
 #include "Common/IGameLogic.hpp"
 
-USING_FLYENGINE_NAMESPACE
+using namespace fly;
 
 namespace game
 {

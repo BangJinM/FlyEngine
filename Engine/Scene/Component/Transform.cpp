@@ -1,16 +1,16 @@
 #include <Scene/Component/Transform.hpp>
 
-#include <rttr/registration>
+// #include <rttr/registration>
 
-using namespace rttr;
-RTTR_REGISTRATION  //注册反射
-{
-    registration::class_<fly::Transform>("Transform")
-        .constructor<>()(rttr::policy::ctor::as_raw_ptr)
-        .property("position", &fly::Transform::GetPosition, &fly::Transform::SetPosition)
-        .property("rotation", &fly::Transform::GetRotation, &fly::Transform::SetRotation)
-        .property("scale", &fly::Transform::GetScale, &fly::Transform::SetScale);
-}
+// using namespace rttr;
+// RTTR_REGISTRATION  //注册反射
+// {
+//     registration::class_<fly::Transform>("Transform")
+//         .constructor<>()(rttr::policy::ctor::as_raw_ptr)
+//         .property("position", &fly::Transform::GetPosition, &fly::Transform::SetPosition)
+//         .property("rotation", &fly::Transform::GetRotation, &fly::Transform::SetRotation)
+//         .property("scale", &fly::Transform::GetScale, &fly::Transform::SetScale);
+// }
 
 namespace fly
 {

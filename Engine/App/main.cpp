@@ -12,7 +12,7 @@ FLYENGINE_BEGIN_NAMESPACE
 extern IApplication *g_pApplication;
 FLYENGINE_END_NAMESPACE
 
-USING_FLYENGINE_NAMESPACE
+using namespace fly;
 
 int main(int argc, char const *argv[])
 {
