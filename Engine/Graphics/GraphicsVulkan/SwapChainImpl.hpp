@@ -1,18 +1,17 @@
 // https://github1s.com/nvpro-samples/nvpro_core/blob/HEAD/nvvk/swapchain_vk.cpp
 #pragma once
+
 #include "GraphicsCore/Base.hpp"
-#include "GraphicsCore/GraphicsDefine.hpp"
 
 #include <vulkan/vulkan.h>
 
 #include <optional>
 #include <vector>
 
-FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
-class InstanceVk;
-class VulkanFactory;
-class DeviceVk;
+class Instance;
+class DeviceManagerImpl;
 
 // What SwapChain::acquire produces: a swap chain image plus
 // semaphores protecting it.
@@ -38,14 +37,15 @@ struct Entry
     // be aware semaphore index may not match active image index
     VkSemaphore readSemaphore{};
     VkSemaphore writtenSemaphore{};
-
-    VkFence fence{};
 };
 
-class SwapChainVk : public Base
+class DeviceManagerImpl;
+extern DeviceManagerImpl *g_pDeviceManager;
+
+class SwapChainImpl : public Base
 {
 public:
-    SwapChainVk(VulkanFactory *);
+    SwapChainImpl();
 
     void Initialize();
     void Finalize();
@@ -63,20 +63,15 @@ public:
     VkFormat   GetVkFormat() { return swapChainImageFormat; }
     VkExtent2D GetSwapChainExtent() { return swapChainExtent; }
 
-    VkSemaphore getActiveWrittenSemaphore() const;
-    VkSemaphore getActiveReadSemaphore() const;
-    VkImage     getActiveImage() const;
-    VkImageView getActiveImageView() const;
-    uint32_t    getActiveImageIndex() const { return m_currentImage; }
-    VkImageView getImageView(int index) const { return m_entries[index].imageView; }
+    VkSemaphore GetActiveWrittenSemaphore() const;
+    VkSemaphore GetActiveReadSemaphore() const;
+    VkImage     GetActiveImage() const;
+    VkImageView GetActiveImageView() const;
+    uint32_t    GetActiveImageIndex() const { return m_currentImage; }
+    VkImageView GetImageView(int index) const { return m_entries[index].imageView; }
     uint32_t    GetImageCount() { return m_imageCount; }
-    VkFence     GetFence() { return m_entries[m_currentImage].fence; }
 
 public:
-    VulkanFactory *m_pVukanFactory;
-    InstanceVk    *m_pVInstance;
-    DeviceVk      *m_pVulkanDevice;
-
     uint32_t       m_currentImage{};
     VkSwapchainKHR swapChain;
     VkFormat       swapChainImageFormat;

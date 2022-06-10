@@ -1,4 +1,3 @@
-include(App/CmakeLists.txt)
 include(Platforms/CmakeLists.txt)
 include(Common/CmakeLists.txt)
 include(Log/CmakeLists.txt)

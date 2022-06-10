@@ -1,9 +1,7 @@
-#include "SwapChainVk.hpp"
+#include "SwapChainImpl.hpp"
 
-#include "DeviceVk.hpp"
-#include "InstanceVk.hpp"
-#include "VulkanDefines.hpp"
-#include "VulkanFactory.hpp"
+#include "DeviceManagerImpl.hpp"
+#include "Instance.hpp"
 #include "VulkanFunc.hpp"
 
 #include <assert.h>
@@ -17,43 +15,39 @@
 #define GRAPHICS_max(a, b) (((a) > (b)) ? (a) : (b))
 #define GRAPHICS_min(a, b) (((a) < (b)) ? (a) : (b))
 
-FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
+FLYENGINE_BEGIN_NAMESPACE
 
-SwapChainVk::SwapChainVk(VulkanFactory *factory) : m_pVukanFactory(factory)
+SwapChainImpl::SwapChainImpl()
 {
-    m_pVInstance    = factory->m_pVInstance;
-    m_pVulkanDevice = factory->m_pDevice;
-
     swapChainExtent.width  = 0;
     swapChainExtent.height = 0;
 }
 
-void SwapChainVk::Initialize()
+void SwapChainImpl::Initialize()
 {
     CreateSwapChain();
     CreateImageViews();
 }
 
-void SwapChainVk::Finalize()
+void SwapChainImpl::Finalize()
 {
     for (auto entry : m_entries)
     {
-        vkDestroyFence(m_pVulkanDevice->m_device, entry.fence, nullptr);
-        vkDestroyImageView(m_pVulkanDevice->m_device, entry.imageView, nullptr);
-        vkDestroySemaphore(m_pVulkanDevice->m_device, entry.readSemaphore, nullptr);
-        vkDestroySemaphore(m_pVulkanDevice->m_device, entry.writtenSemaphore, nullptr);
+        vkDestroyImageView(g_pDeviceManager->device->m_device, entry.imageView, nullptr);
+        vkDestroySemaphore(g_pDeviceManager->device->m_device, entry.readSemaphore, nullptr);
+        vkDestroySemaphore(g_pDeviceManager->device->m_device, entry.writtenSemaphore, nullptr);
     }
 
-    vkDestroySwapchainKHR(m_pVulkanDevice->m_device, swapChain, nullptr);
+    vkDestroySwapchainKHR(g_pDeviceManager->device->m_device, swapChain, nullptr);
     swapChain = VK_NULL_HANDLE;
 
     m_entries.clear();
 }
 
-void SwapChainVk::CreateSwapChain()
+void SwapChainImpl::CreateSwapChain()
 {
-    VkPhysicalDevice        device           = m_pVulkanDevice->m_physicalDevice;
-    SwapChainSupportDetails swapChainSupport = m_pVulkanDevice->QuerySwapChainSupport(device);
+    VkPhysicalDevice        device           = g_pDeviceManager->device->m_physicalDevice;
+    SwapChainSupportDetails swapChainSupport = g_pDeviceManager->device->QuerySwapChainSupport(device);
 
     VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
     VkPresentModeKHR   presentMode   = ChooseSwapPresentMode(swapChainSupport.presentModes);
@@ -65,7 +59,7 @@ void SwapChainVk::CreateSwapChain()
         imageCount = swapChainSupport.capabilities.maxImageCount;
     }
 
-    auto surface = m_pVulkanDevice->m_surfaceKHR;
+    auto surface = g_pDeviceManager->surfaceKHR->surfaceKHR;
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType   = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -78,7 +72,7 @@ void SwapChainVk::CreateSwapChain()
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    QueueFamilyIndices indices              = m_pVulkanDevice->FindQueueFamilies(m_pVulkanDevice->m_physicalDevice);
+    QueueFamilyIndices indices              = g_pDeviceManager->device->FindQueueFamilies(g_pDeviceManager->device->m_physicalDevice);
     uint32_t           queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
     if (indices.graphicsFamily != indices.presentFamily)
@@ -97,17 +91,17 @@ void SwapChainVk::CreateSwapChain()
     createInfo.presentMode    = presentMode;
     createInfo.clipped        = VK_TRUE;
 
-    CheckVk(vkCreateSwapchainKHR(m_pVulkanDevice->m_device, &createInfo, nullptr, &swapChain));
+    CheckVk(vkCreateSwapchainKHR(g_pDeviceManager->device->m_device, &createInfo, nullptr, &swapChain));
 
     swapChainImageFormat = surfaceFormat.format;
 }
 
-void SwapChainVk::CreateImageViews()
+void SwapChainImpl::CreateImageViews()
 {
     VkResult err;
-    CheckVk(vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, nullptr));
+    CheckVk(vkGetSwapchainImagesKHR(g_pDeviceManager->device->m_device, swapChain, &m_imageCount, nullptr));
     std::vector<VkImage> images(m_imageCount);
-    CheckVk(vkGetSwapchainImagesKHR(m_pVulkanDevice->m_device, swapChain, &m_imageCount, images.data()));
+    CheckVk(vkGetSwapchainImagesKHR(g_pDeviceManager->device->m_device, swapChain, &m_imageCount, images.data()));
 
     m_entries.resize(m_imageCount);
 
@@ -133,25 +127,20 @@ void SwapChainVk::CreateImageViews()
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount     = 1;
 
-        err = CheckVk(vkCreateImageView(m_pVulkanDevice->m_device, &createInfo, nullptr, &entry.imageView));
+        err = CheckVk(vkCreateImageView(g_pDeviceManager->device->m_device, &createInfo, nullptr, &entry.imageView));
 
         VkSemaphoreCreateInfo semCreateInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
 
-        err = CheckVk(vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
+        err = CheckVk(vkCreateSemaphore(g_pDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.readSemaphore));
 
-        err = CheckVk(vkCreateSemaphore(m_pVulkanDevice->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
-
-        VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-        fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-        err = CheckVk(vkCreateFence(m_pVulkanDevice->m_device, &fenceCreateInfo, nullptr, &entry.fence));
+        err = CheckVk(vkCreateSemaphore(g_pDeviceManager->device->m_device, &semCreateInfo, nullptr, &entry.writtenSemaphore));
     }
 }
 
-bool SwapChainVk::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
+bool SwapChainImpl::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
 {
-    VkDevice    device    = m_pVulkanDevice->m_device;
-    VkSemaphore semaphore = argSemaphore ? argSemaphore : getActiveReadSemaphore();
+    VkDevice    device    = g_pDeviceManager->device->m_device;
+    VkSemaphore semaphore = argSemaphore ? argSemaphore : GetActiveReadSemaphore();
     VkResult    result;
     result = CheckVk(vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, semaphore, (VkFence)VK_NULL_HANDLE, &m_currentImage));
 
@@ -159,20 +148,20 @@ bool SwapChainVk::Acquire(VkSemaphore argSemaphore, SwapChainAcquireState *pOut)
     {
         if (pOut != nullptr)
         {
-            pOut->image     = getActiveImage();
-            pOut->view      = getActiveImageView();
-            pOut->index     = getActiveImageIndex();
-            pOut->waitSem   = getActiveReadSemaphore();
-            pOut->signalSem = getActiveWrittenSemaphore();
+            pOut->image     = GetActiveImage();
+            pOut->view      = GetActiveImageView();
+            pOut->index     = GetActiveImageIndex();
+            pOut->waitSem   = GetActiveReadSemaphore();
+            pOut->signalSem = GetActiveWrittenSemaphore();
         }
         return true;
     }
     return false;
 }
 
-VkResult SwapChainVk::QueuePresent(VkQueue &presentQueue)
+VkResult SwapChainImpl::QueuePresent(VkQueue &presentQueue)
 {
-    VkSemaphore swapchainWrittenSemaphore = getActiveWrittenSemaphore();
+    VkSemaphore swapchainWrittenSemaphore = GetActiveWrittenSemaphore();
 
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType            = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -190,7 +179,7 @@ VkResult SwapChainVk::QueuePresent(VkQueue &presentQueue)
     return CheckVk(vkQueuePresentKHR(presentQueue, &presentInfo));
 }
 
-VkSurfaceFormatKHR SwapChainVk::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
+VkSurfaceFormatKHR SwapChainImpl::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats)
 {
     for (const auto &availableFormat : availableFormats)
     {
@@ -203,7 +192,7 @@ VkSurfaceFormatKHR SwapChainVk::ChooseSwapSurfaceFormat(const std::vector<VkSurf
     return availableFormats[0];
 }
 
-VkPresentModeKHR SwapChainVk::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
+VkPresentModeKHR SwapChainImpl::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
 {
     for (const auto &availablePresentMode : availablePresentModes)
     {
@@ -216,7 +205,7 @@ VkPresentModeKHR SwapChainVk::ChooseSwapPresentMode(const std::vector<VkPresentM
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D SwapChainVk::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
+VkExtent2D SwapChainImpl::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
 {
     VkExtent2D extent = {};
     if (capabilities.currentExtent.width == 0xFFFFFFFF && swapChainExtent.width != 0 && swapChainExtent.height != 0)
@@ -234,22 +223,22 @@ VkExtent2D SwapChainVk::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabil
     return swapChainExtent;
 }
 
-VkSemaphore SwapChainVk::getActiveWrittenSemaphore() const
+VkSemaphore SwapChainImpl::GetActiveWrittenSemaphore() const
 {
     return m_entries[(m_currentSemaphore % m_imageCount)].writtenSemaphore;
 }
 
-VkSemaphore SwapChainVk::getActiveReadSemaphore() const
+VkSemaphore SwapChainImpl::GetActiveReadSemaphore() const
 {
     return m_entries[(m_currentSemaphore % m_imageCount)].readSemaphore;
 }
 
-VkImage SwapChainVk::getActiveImage() const
+VkImage SwapChainImpl::GetActiveImage() const
 {
     return m_entries[m_currentImage].image;
 }
 
-VkImageView SwapChainVk::getActiveImageView() const
+VkImageView SwapChainImpl::GetActiveImageView() const
 {
     return m_entries[m_currentImage].imageView;
 }

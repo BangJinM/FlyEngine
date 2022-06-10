@@ -1,20 +1,8 @@
 #include "VulkanFunc.hpp"
 
-FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
+#include <string>
 
-VkShaderStageFlagBits MapVkShaderStageFlagBits(ShaderStageFlagBit stage)
-{
-    switch (stage)
-    {
-        case ShaderStageFlagBit::VERTEX: return VK_SHADER_STAGE_VERTEX_BIT;
-        case ShaderStageFlagBit::CONTROL: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-        case ShaderStageFlagBit::EVALUATION: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-        case ShaderStageFlagBit::GEOMETRY: return VK_SHADER_STAGE_GEOMETRY_BIT;
-        case ShaderStageFlagBit::FRAGMENT: return VK_SHADER_STAGE_FRAGMENT_BIT;
-        case ShaderStageFlagBit::COMPUTE: return VK_SHADER_STAGE_COMPUTE_BIT;
-        default: return VK_SHADER_STAGE_VERTEX_BIT;
-    }
-}
+FLYENGINE_BEGIN_NAMESPACE
 
 std::string StringifyResultVk(VkResult result)
 {
@@ -50,11 +38,16 @@ std::string StringifyResultVk(VkResult result)
 
 VkResult CheckVk(VkResult result)
 {
-    if (result == VK_SUCCESS) return result;
+    if (result == VK_SUCCESS)
+        return result;
 
     auto failure = StringifyResultVk(result);
 
-    throw std::runtime_error("Vulkan error: " + failure);
+    std::string str = "";
+
+    str += "Vulkan ERROR ID: " + std::to_string(result) + "  INFO: " + failure;
+
+    SHOWERROR(str);
     return result;
 }
 

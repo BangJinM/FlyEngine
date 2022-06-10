@@ -1,12 +1,12 @@
 #pragma once
 
-#include "VulkanDefines.hpp"
+#include <vulkan/vulkan.hpp>
+
+#include "Common/BaseDefines.hpp"
 
 #include <iostream>
 
-FLYENGINE_GRAPHICS_BEGIN_NAMESPACE
-
-VkShaderStageFlagBits MapVkShaderStageFlagBits(ShaderStageFlagBit stage);
+FLYENGINE_BEGIN_NAMESPACE
 
 std::string StringifyResultVk(VkResult result);
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #define FLYENGINE_BEGIN_NAMESPACE \
     namespace fly                 \
     {

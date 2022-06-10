@@ -42,7 +42,7 @@ template <typename T>
 template <typename K>
 constexpr auto Vector2<T>::Cross(const Vector2<K> &other) const
 {
-    return Vector2<decltype(vec2.Y * vec1.X)>(x * other.x - x * other.y, y * other.x - y * other.y);
+    return Vector2<decltype(x * other.x - x * other.y)>(x * other.x - x * other.y, y * other.x - y * other.y);
 }
 
 template <typename T>

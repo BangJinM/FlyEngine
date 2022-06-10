@@ -21,7 +21,6 @@ public:
 
     bool                      CheckValidationLayerSupport();
     std::vector<const char *> GetRequiredExtensions();
-
 private:
     VkInstance               m_Instance = VK_NULL_HANDLE;
     VkDebugUtilsMessengerEXT debugMessenger;

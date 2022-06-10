@@ -50,6 +50,7 @@ macro(print_config)
     message("------------------------------------------------------------------------")
     message("")
 endmacro()
+print_config()
 
 macro(add_my_test add_test_name)
     message("")

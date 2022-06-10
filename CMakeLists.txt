@@ -6,7 +6,7 @@ project(FlyEngine VERSION 0.0.1)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(Options)
-print_config()
+include(Defines)
 
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/Engine/")
@@ -14,20 +14,9 @@ include_directories("${PROJECT_SOURCE_DIR}/Engine/Core")
 include_directories("${PROJECT_SOURCE_DIR}/Engine/Platforms")
 include_directories("${PROJECT_SOURCE_DIR}/Engine/Graphics")
 
-if(CMAKE_HOST_WIN32)
-    add_definitions("-D_CRT_SECURE_NO_WARNINGS")
-	add_definitions("-DVK_USE_PLATFORM_WIN32_KHR")
-    add_definitions("-DFLYENGINE_PLATFORM_WIN32")
-# elseif(CMAKE_HOST_APPLE)
-# 	add_definitions("-DVK_USE_PLATFORM_METAL_EXT")
-# elseif(COCOS_PLATFORM_ANDROID)
-# 	add_definitions("-DVK_USE_PLATFORM_ANDROID_KHR")
-# else()
-# 	add_definitions("-DVK_USE_PLATFORM_XLIB_KHR")
-endif()
-
 add_subdirectory(Engine)
 add_subdirectory(Game)
+add_subdirectory(App)
 
 # 构建并运行单元测试
 if (WITH_TESTS)
