@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Common/BaseDefines.hpp"
+
 #include <cstdint>
 #include <ostream>
 
@@ -205,15 +207,14 @@ constexpr auto operator*(const J &left, const Vector3<K> &right);
 template <typename K, typename J>
 constexpr auto operator/(const Vector3<K> &left, const J &right);
 
-
 template <typename K>
 std::ostream &operator<<(std::ostream &stream, const Vector3<K> &vector);
 
-using Vector3F  = Vector3<float>;
-using Vector3D  = Vector3<double>;
-using Vector3I  = Vector3<int32_t>;
-using Vector3UI = Vector3<uint32_t>;
-using Vector3US = Vector3<uint16_t>;
+using Vector3f  = Vector3<Float32>;
+using Vector3d  = Vector3<Double>;
+using Vector3i  = Vector3<Int32>;
+using Vector3ui = Vector3<Uint32>;
+using Vector3us = Vector3<Uint16>;
 };  // namespace fly
 
 #include "Vector3.inl"

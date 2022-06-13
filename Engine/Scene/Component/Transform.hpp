@@ -9,18 +9,21 @@ namespace fly
 class Transform : Component
 {
 public:
-    Vector3F position;
-    Vector3F scale;
-    Vector3F rotation;
+    Vector3f position = Vector3f::Zero;
+    Vector3f scale    = Vector3f::Zero;
+    Vector3f rotation = Vector3f::Zero;
 
 public:
-    void     SetPosition(Vector3F position);
-    Vector3F GetPosition();
+    Transform();
+    ~Transform();
 
-    void     SetScale(Vector3F scale);
-    Vector3F GetScale();
+    void     SetPosition(Vector3f position);
+    Vector3f GetPosition();
 
-    void     SetRotation(Vector3F rotation);
-    Vector3F GetRotation();
+    void     SetScale(Vector3f scale);
+    Vector3f GetScale();
+
+    void     SetRotation(Vector3f rotation);
+    Vector3f GetRotation();
 };
 };  // namespace fly

@@ -7,7 +7,7 @@ namespace fly
 class Component
 {
 public:
-    Component();
-    ~Component();
+    Component() {}
+    ~Component() {}
 };
 };  // namespace fly
