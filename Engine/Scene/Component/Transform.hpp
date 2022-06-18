@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Common/BaseDefines.hpp>
-#include <Math/Vector3.hpp>
+#include <Math/Vector.hpp>
 #include <Scene/Component.hpp>
 
 namespace fly

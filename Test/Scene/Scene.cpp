@@ -19,12 +19,12 @@ int main(int argc, char const *argv[])
     Transform obj;
 
     rttr::property prop = rttr::type::get(obj).get_property("position");
-    prop.set_value(obj, Vector3f(1.f, 1.f, 1.f));
     auto vt = prop.get_type();
     for (auto &prop1 : vt.get_properties())
         std::cout << "name: " << prop1.get_name();
     for (auto &meth1 : vt.get_methods())
         std::cout << "name: " << meth1.get_name();
     std::cout << "end " << std::endl;
+
     // auto json_string = rttr::io::to_json(obj);  // serialize the circle to 'json_string'
 }
