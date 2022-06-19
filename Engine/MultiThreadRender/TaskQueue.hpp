@@ -2,17 +2,18 @@
 
 #include <queue>
 
+#include "Common/IRuntimeModule.hpp"
 #include "MultiThreadRender/TaskBase.hpp"
 
 namespace fly
 {
 /// 定义一个渲染任务队列
-class RenderTaskQueue
+class RenderTaskQueue : public IRuntimeModule
 {
 public:
     /// 添加任务到队列
     /// \param render_task
-    static void Push(RenderTaskBase *render_task) { render_task_queue_.push(render_task); }
+    static void Push(TaskBase *render_task) { render_task_queue_.push(render_task); }
 
     /// 队列中是否没有了任务
     /// \return
@@ -20,7 +21,7 @@ public:
 
     /// 获取队列中第一个任务
     /// \return
-    static RenderTaskBase *Front() { return *(render_task_queue_.front()); }
+    static TaskBase *Front() { return (render_task_queue_.front()); }
 
     /// 弹出队列中第一个任务
     static void Pop() { render_task_queue_.pop(); }

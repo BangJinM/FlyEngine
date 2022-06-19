@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Allocator.hpp"
 #include "Common/BaseDefines.hpp"
-#include "Common/IRuntimeModule.h"
+#include "Common/IRuntimeModule.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
 

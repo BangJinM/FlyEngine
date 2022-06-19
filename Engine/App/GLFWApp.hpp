@@ -6,7 +6,7 @@
 // #include "GraphicsCore/GraphicsFactory.hpp"
 #include "Common/BaseDefines.hpp"
 #include "Common/IApplication.h"
-#include "Common/IRuntimeModule.h"
+#include "Common/IRuntimeModule.hpp"
 
 FLYENGINE_BEGIN_NAMESPACE
 

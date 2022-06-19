@@ -2,7 +2,7 @@
 
 #include "Common/IApplication.h"
 #include "Common/IGameLogic.hpp"
-#include "Common/IRuntimeModule.h"
+#include "Common/IRuntimeModule.hpp"
 
 // #include "GraphicsVulkan/VulkanFactory.hpp"
 #include "Platforms/NativeWindow.hpp"

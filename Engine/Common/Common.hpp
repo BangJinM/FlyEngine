@@ -1,6 +1,6 @@
 #include "BaseDefines.hpp"
 #include "IApplication.h"
 #include "IGameLogic.hpp"
-#include "IRuntimeModule.h"
+#include "IRuntimeModule.hpp"
 #include "NonCopyable.hpp"
 #include "Singleton.hpp"
