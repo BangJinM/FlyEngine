@@ -3,33 +3,39 @@
 #include <queue>
 
 #include "Common/IRuntimeModule.hpp"
-#include "MultiThreadRender/TaskBase.hpp"
+
+class TaskBase;
 
 namespace fly
 {
 /// 定义一个渲染任务队列
 class RenderTaskQueue : public IRuntimeModule
 {
+private:
+    std::queue<TaskBase *> renderTaskQueue;  //渲染任务队列
+
 public:
+    virtual bool Initialize();
+
+    virtual bool Finalize();
+
+    virtual void Tick(float deltaTime);
+
     /// 添加任务到队列
     /// \param render_task
-    static void Push(TaskBase *render_task) { render_task_queue_.push(render_task); }
+    void Push(TaskBase *render_task);
 
     /// 队列中是否没有了任务
     /// \return
-    static bool Empty() { return render_task_queue_.empty(); }
-
+    bool Empty();
     /// 获取队列中第一个任务
     /// \return
-    static TaskBase *Front() { return (render_task_queue_.front()); }
+    TaskBase *Front();
 
     /// 弹出队列中第一个任务
-    static void Pop() { render_task_queue_.pop(); }
+    void Pop();
 
     /// 获取队列中的任务数量
-    static size_t Size() { return render_task_queue_.size(); }
-
-private:
-    static std::queue<TaskBase *> render_task_queue_;  //渲染任务队列
+    size_t Size();
 };
 }  // namespace fly
