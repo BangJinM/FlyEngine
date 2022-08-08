@@ -88,15 +88,15 @@ void *MemoryManager::Allocate(size_t size)
 
 void *MemoryManager::Allocate(size_t size, size_t alignment)
 {
-    uint8_t *p;
+    Int8 *p;
     size += alignment;
     Allocator *pAlloc = LookUpAllocator(size);
     if (pAlloc)
-        p = reinterpret_cast<uint8_t *>(pAlloc->Allocate());
+        p = reinterpret_cast<Int8 *>(pAlloc->Allocate());
     else
-        p = reinterpret_cast<uint8_t *>(malloc(size));
+        p = reinterpret_cast<Int8 *>(malloc(size));
 
-    p = reinterpret_cast<uint8_t *>(ALIGN(reinterpret_cast<size_t>(p), alignment));
+    p = reinterpret_cast<Int8 *>(ALIGN(reinterpret_cast<size_t>(p), alignment));
 
     return static_cast<void *>(p);
 }

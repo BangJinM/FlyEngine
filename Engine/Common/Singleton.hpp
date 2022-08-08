@@ -14,8 +14,10 @@ protected:
 public:
     inline static T GetInstance()
     {
-        if (singleton) return singleton;
+        if (singleton)
+            return singleton;
         singleton = new T();
+        return singleton;
     }
 };
 

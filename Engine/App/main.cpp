@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "Common/BaseDefines.hpp"
-#include "Common/IApplication.h"
+#include "Common/IApplication.hpp"
 // #include "File/Files.hpp"
 #include "Log/Log.hpp"
 

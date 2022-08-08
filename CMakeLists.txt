@@ -16,7 +16,6 @@ include_directories("${PROJECT_SOURCE_DIR}/Engine/Graphics")
 
 add_subdirectory(Engine)
 add_subdirectory(Game)
-add_subdirectory(App)
 
 # 构建并运行单元测试
 if (WITH_TESTS)

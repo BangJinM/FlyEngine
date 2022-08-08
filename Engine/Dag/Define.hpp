@@ -1,11 +1,11 @@
 #pragma once
 
-namespace FlyEngine::DAG
+namespace fly::dag
 {
-    enum NodeType : int
-    {
-        UNDEFINE = -1,
-        PASS = 0,
-        RESOURCE,
-    };
+enum NodeType : int
+{
+    UNDEFINE = -1,
+    PASS,
+    RESOURCE,
+};
 }

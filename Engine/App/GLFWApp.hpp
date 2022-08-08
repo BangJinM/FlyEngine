@@ -5,8 +5,16 @@
 
 // #include "GraphicsCore/GraphicsFactory.hpp"
 #include "Common/BaseDefines.hpp"
-#include "Common/IApplication.h"
+#include "Common/IApplication.hpp"
 #include "Common/IRuntimeModule.hpp"
+
+namespace cc
+{
+namespace gfx
+{
+class Device;
+}
+}  // namespace cc
 
 FLYENGINE_BEGIN_NAMESPACE
 
@@ -31,6 +39,7 @@ public:
 public:
     GLFWwindow                   *m_pWindow = nullptr;
     std::vector<IRuntimeModule *> m_runtimeModules;
+    cc::gfx::Device              *m_pDevice;
     // Graphics::GraphicsFactory    *m_pGraphicsFactory;
 };
 FLYENGINE_END_NAMESPACE

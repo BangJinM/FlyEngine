@@ -47,7 +47,7 @@ void *Allocator::Allocate()
     if (!m_pFreeList)
     {
         // allocate a new page
-        PageHeader *pNewPage = reinterpret_cast<PageHeader *>(new uint8_t[m_szPageSize]);
+        PageHeader *pNewPage = reinterpret_cast<PageHeader *>(new Int8[m_szPageSize]);
         ++m_nPages;
         m_nBlocks += m_nBlocksPerPage;
         m_nFreeBlocks += m_nBlocksPerPage;
@@ -99,7 +99,7 @@ void Allocator::FreeAll()
         PageHeader *_p = pPage;
         pPage          = pPage->pNext;
 
-        delete[] reinterpret_cast<uint8_t *>(_p);
+        delete[] reinterpret_cast<Int8 *>(_p);
     }
 
     m_pPageList = nullptr;
@@ -112,6 +112,6 @@ void Allocator::FreeAll()
 
 BlockHeader *Allocator::NextBlock(BlockHeader *pBlock)
 {
-    return reinterpret_cast<BlockHeader *>(reinterpret_cast<uint8_t *>(pBlock) + m_szBlockSize);
+    return reinterpret_cast<BlockHeader *>(reinterpret_cast<Int8 *>(pBlock) + m_szBlockSize);
 }
 FLYENGINE_END_NAMESPACE

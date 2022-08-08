@@ -1,5 +1,5 @@
 #include "BaseDefines.hpp"
-#include "IApplication.h"
+#include "IApplication.hpp"
 #include "IGameLogic.hpp"
 #include "IRuntimeModule.hpp"
 #include "NonCopyable.hpp"

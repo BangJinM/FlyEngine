@@ -1,2 +1,14 @@
 # include(Graphics/GraphicsCore/CmakeLists.txt)
 # include(Graphics/GraphicsVulkan/CmakeLists.txt)
+
+add_definitions("-DVK_NO_PROTOTYPES")
+add_definitions("-DVK_CC_USE_VULKAN")
+
+include(Graphics/core/CmakeLists.txt)
+include(Graphics/gfx-vulkan/CmakeLists.txt)
+
+set(GRAPHICS_FILES 
+    Graphics/GFXDeviceManager.h
+    ${GRAPHICS_CORE_FILES}
+    ${GRAPHICS_VULKAN_FILES}
+)

@@ -22,9 +22,9 @@ class Allocator
 {
 public:
     // debug patterns
-    static const uint8_t PATTERN_ALIGN = 0xFC;
-    static const uint8_t PATTERN_ALLOC = 0xFD;
-    static const uint8_t PATTERN_FREE  = 0xFE;
+    static const Int8 PATTERN_ALIGN = 0xFC;
+    static const Int8 PATTERN_ALLOC = 0xFD;
+    static const Int8 PATTERN_FREE  = 0xFE;
 
     Allocator();
     Allocator(size_t data_size, size_t page_size, size_t alignment);
